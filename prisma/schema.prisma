@@ -1,8 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -10,4 +8,142 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+}
+
+model Usuario {
+  id            Int      @id @default(autoincrement())
+  username      String   @unique @db.VarChar(50)
+  nome          String   @db.VarChar(255)
+  email         String   @unique @db.VarChar(255)
+  senhaHash     String   @map("senha_hash") @db.VarChar(255)
+  fotoPerfilUrl String?  @map("foto_perfil_url") @db.VarChar(255)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  lojas                Loja[]
+  avaliacoesProduto    AvaliacaoProduto[]
+  avaliacoesLoja       AvaliacaoLoja[]
+  comentariosAvaliacao ComentarioAvaliacao[]
+
+  @@map("usuarios")
+}
+
+model Loja {
+  id         Int      @id @default(autoincrement())
+  usuarioId  Int      @map("usuario_id")
+  nome       String   @db.VarChar(255)
+  descricao  String?  @db.Text
+  logoUrl    String?  @map("logo_url") @db.VarChar(255)
+  bannerUrl  String?  @map("banner_url") @db.VarChar(255)
+  stickerUrl String?  @map("sticker_url") @db.VarChar(255)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  usuario    Usuario         @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  produtos   Produto[]
+  avaliacoes AvaliacaoLoja[]
+
+  @@index([usuarioId])
+  @@map("lojas")
+}
+
+model Categoria {
+  id             Int    @id @default(autoincrement())
+  nome           String @db.VarChar(100)
+  categoriaPaiId Int?   @map("categoria_pai_id")
+
+  categoriaPai  Categoria?  @relation("Subcategorias", fields: [categoriaPaiId], references: [id], onDelete: SetNull)
+  subcategorias Categoria[] @relation("Subcategorias")
+  produtos      Produto[]
+
+  @@index([categoriaPaiId])
+  @@map("categorias")
+}
+
+model Produto {
+  id          Int      @id @default(autoincrement())
+  lojaId      Int      @map("loja_id")
+  categoriaId Int      @map("categoria_id")
+  nome        String   @db.VarChar(255)
+  descricao   String?  @db.Text
+  preco       Decimal  @db.Decimal(10, 2)
+  estoque     Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  loja       Loja               @relation(fields: [lojaId], references: [id], onDelete: Cascade)
+  categoria  Categoria          @relation(fields: [categoriaId], references: [id], onDelete: Restrict)
+  imagens    ImagemProduto[]
+  avaliacoes AvaliacaoProduto[]
+
+  @@index([lojaId])
+  @@index([categoriaId])
+  @@map("produtos")
+}
+
+model ImagemProduto {
+  id        Int    @id @default(autoincrement())
+  produtoId Int    @map("produto_id")
+  urlImagem String @map("url_imagem") @db.VarChar(255)
+  ordem     Int
+
+  produto Produto @relation(fields: [produtoId], references: [id], onDelete: Cascade)
+
+  @@index([produtoId])
+  @@map("imagens_produto")
+}
+
+model AvaliacaoProduto {
+  id         Int      @id @default(autoincrement())
+  usuarioId  Int      @map("usuario_id")
+  produtoId  Int      @map("produto_id")
+  nota       Int
+  comentario String?  @db.Text
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  usuario     Usuario               @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  produto     Produto               @relation(fields: [produtoId], references: [id], onDelete: Cascade)
+  comentarios ComentarioAvaliacao[]
+
+  @@index([usuarioId])
+  @@index([produtoId])
+  @@map("avaliacoes_produto")
+}
+
+model AvaliacaoLoja {
+  id         Int      @id @default(autoincrement())
+  usuarioId  Int      @map("usuario_id")
+  lojaId     Int      @map("loja_id")
+  nota       Int
+  comentario String?  @db.Text
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  usuario     Usuario               @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  loja        Loja                  @relation(fields: [lojaId], references: [id], onDelete: Cascade)
+  comentarios ComentarioAvaliacao[]
+
+  @@index([usuarioId])
+  @@index([lojaId])
+  @@map("avaliacoes_loja")
+}
+
+model ComentarioAvaliacao {
+  id                 Int      @id @default(autoincrement())
+  usuarioId          Int      @map("usuario_id")
+  avaliacaoLojaId    Int?     @map("avaliacao_loja_id")
+  avaliacaoProdutoId Int?     @map("avaliacao_produto_id")
+  conteudo           String   @db.Text
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  usuario          Usuario           @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  avaliacaoLoja    AvaliacaoLoja?    @relation(fields: [avaliacaoLojaId], references: [id], onDelete: Cascade)
+  avaliacaoProduto AvaliacaoProduto? @relation(fields: [avaliacaoProdutoId], references: [id], onDelete: Cascade)
+
+  @@index([usuarioId])
+  @@index([avaliacaoLojaId])
+  @@index([avaliacaoProdutoId])
+  @@map("comentarios_avaliacao")
 }
