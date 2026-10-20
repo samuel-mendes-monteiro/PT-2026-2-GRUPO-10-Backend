@@ -1,0 +1,172 @@
+type: collection.insomnia.rest/5.0
+schema_version: "5.1"
+name: CJR PT
+meta:
+  id: wrk_dfb3473d53ce4886b0fe50d99660a78c
+  created: 1792454299842
+  modified: 1792454299842
+  description: ""
+collection:
+  - url: localhost:3000/user/
+    name: Criar User
+    meta:
+      id: req_32265f63697f4d12973e17e209139111
+      created: 1792454304715
+      modified: 1792454499652
+      isPrivate: false
+      description: ""
+      sortKey: -1792454304715
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {        
+          "username": "teste_username",     
+         "nome": "teste",
+          "email":   "teste@gmail.com",
+          "senhaHash": "senha_teste_123",
+          "fotoPerfilUrl": "imagem teste"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:3000/user/2/
+    name: Update User
+    meta:
+      id: req_17d8e0dc7055447c9259d8bda0ace4bc
+      created: 1792454493638
+      modified: 1792454582970
+      isPrivate: false
+      description: ""
+      sortKey: -1792454304615
+    method: PATCH
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"nome": "teste+"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:3000/user/
+    name: Get Users
+    meta:
+      id: req_562735504bbb4a7abd228bb670dd98f9
+      created: 1792454526561
+      modified: 1792454556177
+      isPrivate: false
+      description: ""
+      sortKey: -1792454304665
+    method: GET
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:3000/auth/login/
+    name: Login
+    meta:
+      id: req_aa9591ca9ec7473692663bac6446ba60
+      created: 1792454597024
+      modified: 1792457533957
+      isPrivate: false
+      description: ""
+      sortKey: -1792454304515
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"email": "teste@gmail.com",
+        	"senha": "senha_teste_123"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:3000/auth/me
+    name: About Me (get User by Token)
+    meta:
+      id: req_e524201c2be2469aa0a668b3e6e2281e
+      created: 1792455890000
+      modified: 1792456624622
+      isPrivate: false
+      description: ""
+      sortKey: -1792454304415
+    method: GET
+    headers:
+      - name: Authorization
+        value: Bearer
+          eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RlQGdtYWlsLmNvbSIsInN1YiI6MiwiaWF0IjoxNzkyNDU2MTYxLCJleHAiOjE3OTI1NDI1NjF9.A64dAh0DPf-jyumkfbupG8tt413AHJMWQ_zj8dCMGio
+        description: ""
+        disabled: true
+    authentication:
+      type: bearer
+      disabled: false
+      token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RlQGdtYWlsLmNvbSIsInN1YiI6MiwiaWF0IjoxNzkyNDU2MTYxLCJleHAiOjE3OTI1NDI1NjF9.A64dAh0DPf-jyumkfbupG8tt413AHJMWQ_zj8dCMGio
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:3000/
+    name: Hello World
+    meta:
+      id: req_33610bdd3df84ed09c65356c2f372a99
+      created: 1792457504854
+      modified: 1792457539240
+      isPrivate: false
+      description: ""
+      sortKey: -1792457504854
+    method: GET
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_f7638b424b973330baee2ab0171cd45728571d99
+    created: 1792454299844
+    modified: 1792454299844
+environments:
+  name: Base Environment
+  meta:
+    id: env_f7638b424b973330baee2ab0171cd45728571d99
+    created: 1792454299843
+    modified: 1792454299843
+    isPrivate: false
