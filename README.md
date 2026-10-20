@@ -14,6 +14,27 @@ Repositório de desenvolvimento web com o framework **NestJS** (back-end), criad
 
 ## Nest (Back-end)
 
+### Inicialização
+
+crie sua .env
+
+#### Windows
+
+```bash
+  copy .env.example .env
+```
+
+#### Linux
+
+```bash
+  cp .env.example .env
+```
+
+##### Configure sua .env preenchendo os campos conforme necessário
+
+- DATABASE_URL
+- JWT_SECRET
+
 ### Instalação
 
 Instale os pacotes:
@@ -43,30 +64,3 @@ Ou com algum software como o Insomnia
 ```bash
 npm run start:dev
 ```
-
----
-
-## Next (Front-end)
-
-### Rodando em desenvolvimento
-
-```bash
-npm run dev
-```
-A aplicação ficará disponível em `http://localhost:3000`.
-
-#### Rodando testes 
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-
-```
-
-
