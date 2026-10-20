@@ -24,7 +24,7 @@ export class AuthService {
             const jwtToken = this.jwtService.sign(payload, {expiresIn: '1d', secret: this.configService.get('JWT_SECRET')});
 
             return {
-                access_token: jwtToken,
+                access_token: jwtToken, // Caso queira verificar o token abra https://www.jwt.io/
             };
         }
 
