@@ -14,7 +14,7 @@ export class LoginValidationMiddleware implements NestMiddleware {
 
         const loginRequestBody = new LoginRequestBody();
         loginRequestBody.email = body.email;
-        loginRequestBody.senha = body.senha;
+        loginRequestBody.senhaHash = body.senhaHash;
 
         const validations = await validate(loginRequestBody);
 

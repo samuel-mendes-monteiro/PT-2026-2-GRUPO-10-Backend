@@ -14,7 +14,7 @@ export class AuthService {
         private readonly configService: ConfigService) {}
 
         async login(loginRequestBody: LoginRequestBody): Promise<UserToken> {
-            const user = await this.validateUser(loginRequestBody.email, loginRequestBody.senha);
+            const user = await this.validateUser(loginRequestBody.email, loginRequestBody.senhaHash);
             if(!user) {
                 throw new UnauthorizedException('Credenciais inválidas');
               }
@@ -29,12 +29,12 @@ export class AuthService {
         }
 
 
-        async validateUser(email: string, senha: string) {
+        async validateUser(email: string, senhaHash: string) {
             const user = await this.userService.findByEmail(email);
 
             if(user)
             {
-                const isPasswordValid = await bcrypt.compare(senha, user.senhaHash);
+                const isPasswordValid = await bcrypt.compare(senhaHash, user.senhaHash);
                 if(isPasswordValid)
                 {
                     return {

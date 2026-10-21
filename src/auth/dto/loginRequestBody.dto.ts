@@ -1,13 +1,11 @@
-import { IsEmail, IsNotEmpty, IsString } from "class-validator";
+import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
 export class LoginRequestBody {
-    @IsNotEmpty()
-    @IsEmail()
-    email: string;
+  @IsNotEmpty({ message: 'O campo email não pode estar vazio' })
+  @IsEmail({}, { message: 'Forneça um endereço de email válido' })
+  email: string;
 
-    @IsNotEmpty()
-    @IsString()
-    senha: string;
-
-
-}
+  @IsNotEmpty({ message: 'O campo senhaHash não pode estar vazio' })
+  @IsString({ message: 'O campo senhaHash tem de ser uma string' })
+  senhaHash: string;
+};

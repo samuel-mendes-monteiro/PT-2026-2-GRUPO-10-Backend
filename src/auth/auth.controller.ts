@@ -22,8 +22,9 @@ export class AuthController {
   @Public()
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  login(@Body() loginRequestBody: LoginRequestBody) {
-    return this.authService.login(loginRequestBody)
+  login(@Body() body:any) {
+    console.log('Dados puros que chegaram ao controlador:', body);
+    return this.authService.login(body)
   }
 
   @Get('me')
