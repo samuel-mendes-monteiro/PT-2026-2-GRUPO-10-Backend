@@ -8,6 +8,7 @@ import { PrismaModule } from './prisma/prisma.module.js';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth/guards/auth-guard.js';
 import { JwtModule } from '@nestjs/jwt';
+import { CategoriesModule } from './categories/categories.module.js';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { JwtModule } from '@nestjs/jwt';
     UserModule,
     AuthModule,
     JwtModule,
+    CategoriesModule,
 
   ],
   controllers: [AppController],
