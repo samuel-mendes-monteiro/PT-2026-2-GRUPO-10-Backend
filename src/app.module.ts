@@ -10,12 +10,14 @@ import { AuthGuard } from './auth/guards/auth-guard.js';
 import { JwtModule } from '@nestjs/jwt';
 import { CategoriesModule } from './categories/categories.module.js';
 import { MailModule } from './mail/mail.module.js';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
+    ThrottlerModule.forRoot([{ ttl: 60_000, limit: 100 }]), // padrão: 100 req/min por IP
     PrismaModule,
     UserModule,
     AuthModule,
@@ -26,10 +28,8 @@ import { MailModule } from './mail/mail.module.js';
   ],
   controllers: [AppController],
   providers: [AppService,
-    {
-      provide: APP_GUARD,
-      useClass: AuthGuard,
-    },
+    { provide: APP_GUARD, useClass: ThrottlerGuard },
+    { provide: APP_GUARD, useClass: AuthGuard },
   ],
 })
 export class AppModule { }

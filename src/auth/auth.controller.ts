@@ -15,6 +15,7 @@ import type { AuthenticatedRequest } from './types/authenticated-request.js';
 import { Public } from './decorators/isPublic.decorator.js';
 import { ForgotPasswordDto } from './dto/forgot-password.dto.js';
 import { ResetPasswordDto } from './dto/reset-password.dto.js';
+import { Throttle } from '@nestjs/throttler';
 
 
 @Controller('auth')
@@ -22,6 +23,7 @@ export class AuthController {
   constructor(private readonly authService: AuthService) { }
 
   @Public()
+    @Throttle({ default: { limit: 5, ttl: 60_000 } }) // 5 por minuto
   @HttpCode(HttpStatus.OK)
   @Post('login')
   login(@Body() body: any) {
@@ -35,6 +37,7 @@ export class AuthController {
   }
 
   @Public()
+  @Throttle({ default: { limit: 3, ttl: 60_000 } }) // 3 por minuto
   @HttpCode(HttpStatus.OK)
   @Post('forgot-password')
   async forgotPassword(@Body() dto: ForgotPasswordDto) {
@@ -45,6 +48,7 @@ export class AuthController {
   }
 
   @Public()
+  @Throttle({ default: { limit: 5, ttl: 60_000 } })
   @HttpCode(HttpStatus.OK)
   @Post('reset-password')
   async resetPassword(@Body() dto: ResetPasswordDto) {
