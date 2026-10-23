@@ -12,7 +12,7 @@ collection:
     meta:
       id: req_32265f63697f4d12973e17e209139111
       created: 1792454304715
-      modified: 1792454499652
+      modified: 1792785321949
       isPrivate: false
       description: ""
       sortKey: -1792454304715
@@ -38,12 +38,12 @@ collection:
         send: true
         store: true
       rebuildPath: true
-  - url: localhost:3000/user/2/
+  - url: localhost:3000/user/3/
     name: Update User
     meta:
       id: req_17d8e0dc7055447c9259d8bda0ace4bc
       created: 1792454493638
-      modified: 1792454582970
+      modified: 1792785511008
       isPrivate: false
       description: ""
       sortKey: -1792454304615
@@ -52,11 +52,19 @@ collection:
       mimeType: application/json
       text: |-
         {
-        	"nome": "teste+"
+         "username": "teste1_username",     
+         "nome": "teste1",
+          "email":   "teste1@gmail.com",
+          "senhaHash": "senha_teste1_123",
+          "fotoPerfilUrl": "imagem teste"
         }
     headers:
       - name: Content-Type
         value: application/json
+    authentication:
+      type: bearer
+      token: "{% response 'body', 'req_aa9591ca9ec7473692663bac6446ba60',
+        'b64::JC5hY2Nlc3NfdG9rZW4=::46b', 'never', 60 %}"
     settings:
       renderRequestBody: true
       encodeUrl: true
@@ -70,11 +78,15 @@ collection:
     meta:
       id: req_562735504bbb4a7abd228bb670dd98f9
       created: 1792454526561
-      modified: 1792454556177
+      modified: 1792785382301
       isPrivate: false
       description: ""
       sortKey: -1792454304665
     method: GET
+    authentication:
+      type: bearer
+      token: "{% response 'body', 'req_aa9591ca9ec7473692663bac6446ba60',
+        'b64::JC5hY2Nlc3NfdG9rZW4=::46b', 'never', 60 %}"
     settings:
       renderRequestBody: true
       encodeUrl: true
@@ -88,7 +100,7 @@ collection:
     meta:
       id: req_aa9591ca9ec7473692663bac6446ba60
       created: 1792454597024
-      modified: 1792457533957
+      modified: 1792785531974
       isPrivate: false
       description: ""
       sortKey: -1792454304515
@@ -98,7 +110,7 @@ collection:
       text: |-
         {
         	"email": "teste@gmail.com",
-        	"senha": "senha_teste_123"
+        	"senhaHash": "senha_teste_123"
         }
     headers:
       - name: Content-Type
@@ -116,10 +128,10 @@ collection:
     meta:
       id: req_e524201c2be2469aa0a668b3e6e2281e
       created: 1792455890000
-      modified: 1792456624622
+      modified: 1792785293126
       isPrivate: false
       description: ""
-      sortKey: -1792454304415
+      sortKey: -1792454304215
     method: GET
     headers:
       - name: Authorization
@@ -130,7 +142,8 @@ collection:
     authentication:
       type: bearer
       disabled: false
-      token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RlQGdtYWlsLmNvbSIsInN1YiI6MiwiaWF0IjoxNzkyNDU2MTYxLCJleHAiOjE3OTI1NDI1NjF9.A64dAh0DPf-jyumkfbupG8tt413AHJMWQ_zj8dCMGio
+      token: "{% response 'body', 'req_aa9591ca9ec7473692663bac6446ba60',
+        'b64::JC5hY2Nlc3NfdG9rZW4=::46b', 'never', 60 %}"
     settings:
       renderRequestBody: true
       encodeUrl: true
@@ -149,6 +162,113 @@ collection:
       description: ""
       sortKey: -1792457504854
     method: GET
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:3000/user/4/
+    name: Delete User
+    meta:
+      id: req_7d55aed32cad4f9ba1b3298d35aa2786
+      created: 1792537760272
+      modified: 1792785393217
+      isPrivate: false
+      description: ""
+      sortKey: -1792454304690
+    method: DELETE
+    authentication:
+      type: bearer
+      token: "{% response 'body', 'req_aa9591ca9ec7473692663bac6446ba60',
+        'b64::JC5hY2Nlc3NfdG9rZW4=::46b', 'never', 60 %}"
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:3000/auth/forgot-password/
+    name: Forgot Password
+    meta:
+      id: req_f0fd00e082f74d73a5a9ad9fc5bb3ba9
+      created: 1792783994554
+      modified: 1792784745337
+      isPrivate: false
+      description: ""
+      sortKey: -1792454304465
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"_comment": "Token aparece no console",
+        	"email": "teste@gmail.com" 
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:3000/auth/reset-password
+    name: Reset Password
+    meta:
+      id: req_0f8c8e30124e4fc5be2e6844807503f3
+      created: 1792784388144
+      modified: 1792785268201
+      isPrivate: false
+      description: ""
+      sortKey: -1792454304440
+    method: POST
+    body:
+      mimeType: application/json
+      text: >-
+        {
+        	"_comment": "Substitua o token pelo que aparece no console quando utiliza o Forgot Password",
+        	"token": "TOKEN_DO_CONSOLE",
+        	"novaSenha": "novasenha123"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - url: localhost:3000/auth/login/
+    name: Login (New Password)
+    meta:
+      id: req_d35eab071ca14beabe74324dc41eb7b3
+      created: 1792784720930
+      modified: 1792785039455
+      isPrivate: false
+      description: ""
+      sortKey: -1792454304315
+    method: POST
+    body:
+      mimeType: application/json
+      text: |-
+        {
+        	"email": "teste@gmail.com",
+        	"senhaHash": "novasenha123"
+        }
+    headers:
+      - name: Content-Type
+        value: application/json
     settings:
       renderRequestBody: true
       encodeUrl: true
