@@ -106,7 +106,7 @@ export class AuthService {
             throw new BadRequestException('Token inválido ou expirado');
         }
 
-        await tx.usuario.update({ where: { id: registro.usuarioId }, data: { senhaHash } });
+        await tx.usuario.update({ where: { id: registro.usuarioId }, data: { senhaHash, senhaVersao: { increment: 1} } });
         await tx.tokenRecuperacaoSenha.deleteMany({ where: { usuarioId: registro.usuarioId } });
         });
     }
