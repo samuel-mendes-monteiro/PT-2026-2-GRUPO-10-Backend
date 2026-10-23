@@ -9,12 +9,14 @@ import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import type { Request } from 'express';
 import { IS_PUBLIC_KEY } from '../decorators/isPublic.decorator.js';
+import { PrismaService } from '../../prisma/prisma.service.js';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
     constructor(private jwtService: JwtService,
         private readonly configService: ConfigService,
         private readonly reflector: Reflector,
+        private readonly prisma: PrismaService,
     ) { }
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -33,6 +35,17 @@ export class AuthGuard implements CanActivate {
         }
         try {
             const payload = await this.jwtService.verifyAsync(token, { secret: this.configService.get<string>('JWT_SECRET') });
+
+            const user = await this.prisma.usuario.findUnique({
+                where: { id: payload.sub },
+                select: { senhaVersao: true },
+            });
+
+            // usuário apagado, ou token emitido antes da última troca de senha
+            if (!user || user.senhaVersao !== payload.v) {
+                throw new UnauthorizedException();
+            }
+
             request['user'] = payload;
         } catch {
             throw new UnauthorizedException();
