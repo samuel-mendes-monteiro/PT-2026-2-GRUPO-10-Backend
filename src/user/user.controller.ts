@@ -1,12 +1,14 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe, ForbiddenException } from '@nestjs/common';
 import { Public } from '../auth/decorators/isPublic.decorator.js';
 import { UserService } from './user.service.js';
 import { CreateUserDto } from './dto/create-user.dto.js';
 import { UpdateUserDto } from './dto/update-user.dto.js';
+import { CurrentUser } from '../auth/decorators/CurrentUser.decorator.js';
+
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService) { }
 
   @Public()
   @Post()
@@ -25,12 +27,25 @@ export class UserController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserDto: UpdateUserDto,
+    @CurrentUser('sub') userId: number,
+  ) {
+    if (id !== userId) {
+      throw new ForbiddenException('Você só pode alterar o seu próprio usuário');
+    }
+    return this.userService.update(id, updateUserDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+  remove(
+    @Param('id', ParseIntPipe) id: number,
+    @CurrentUser('sub') userId: number,
+  ) {
+    if (id !== userId) {
+      throw new ForbiddenException('Você só pode apagar o seu próprio usuário');
+    }
+    return this.userService.remove(id);
   }
 }
