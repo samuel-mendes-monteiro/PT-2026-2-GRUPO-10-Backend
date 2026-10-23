@@ -9,6 +9,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth/guards/auth-guard.js';
 import { JwtModule } from '@nestjs/jwt';
 import { CategoriesModule } from './categories/categories.module.js';
+import { MailModule } from './mail/mail.module.js';
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { CategoriesModule } from './categories/categories.module.js';
     AuthModule,
     JwtModule,
     CategoriesModule,
+    MailModule,
 
   ],
   controllers: [AppController],
