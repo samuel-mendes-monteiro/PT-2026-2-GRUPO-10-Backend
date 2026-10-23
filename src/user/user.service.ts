@@ -110,6 +110,7 @@ export class UserService {
         email: updateUserDto.email,
         ...(updateUserDto.senhaHash !== undefined && {
           senhaHash: await bcrypt.hash(updateUserDto.senhaHash, 10),
+          senhaVersao: { increment: 1 },
         }),
         fotoPerfilUrl: updateUserDto.fotoPerfilUrl,
       },
