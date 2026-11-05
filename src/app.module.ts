@@ -14,6 +14,8 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { ProductsModule } from './products/products.module.js';
 import { ReviewsModule } from './reviews/reviews.module.js';
 import { CommentsModule } from './comments/comments.module.js';
+import { LojasModule } from './lojas/lojas.module.js';
+
 
 @Module({
   imports: [
@@ -30,6 +32,7 @@ import { CommentsModule } from './comments/comments.module.js';
     ReviewsModule,
     CommentsModule,
     MailModule,
+    LojasModule,
 
   ],
   controllers: [AppController],
