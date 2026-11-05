@@ -11,6 +11,9 @@ import { JwtModule } from '@nestjs/jwt';
 import { CategoriesModule } from './categories/categories.module.js';
 import { MailModule } from './mail/mail.module.js';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { ProductsModule } from './products/products.module.js';
+import { ReviewsModule } from './reviews/reviews.module.js';
+import { CommentsModule } from './comments/comments.module.js';
 
 @Module({
   imports: [
@@ -23,6 +26,9 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
     AuthModule,
     JwtModule,
     CategoriesModule,
+    ProductsModule,
+    ReviewsModule,
+    CommentsModule,
     MailModule,
 
   ],
