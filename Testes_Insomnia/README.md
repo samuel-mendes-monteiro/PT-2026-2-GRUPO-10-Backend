@@ -54,6 +54,41 @@ O **Delete User** apaga o usuário logado. Para seguir testando, recrie-o com **
 
 **Para repetir o teste.** Rode **Forgot Password** e **Reset Password** de novo com `"novaSenha": "senha_teste_123"` para voltar à senha original.
 
+## Fluxo 3 — Lojas, categorias, produtos, avaliações e comentários
+
+As requisições ficam nas pastas **Lojas**, **Categorias**, **Produtos**, **Avaliações** e **Comentários** da coleção. Faça o **Login** antes (as protegidas pegam o token sozinhas). Rode nesta ordem:
+
+| # | Pasta | Requisição | Esperado |
+|---|---|---|---|
+| 1 | Lojas | **Criar Loja** | `201` |
+| 2 | Lojas | **Criar Loja (nome vazio)** | `400` |
+| 3 | Lojas | **Listar Lojas** / **Buscar Loja por Id** | `200` |
+| 4 | Lojas | **Editar Loja** | `200` |
+| 5 | Categorias | **Criar Categoria** e **Criar Subcategoria** | `201` |
+| 6 | Categorias | **Listar Categorias** / **Opcoes de Categoria** / **Buscar Categoria por Id** | `200` |
+| 7 | Categorias | **Editar Categoria** | `200` |
+| 8 | Produtos | **Criar Produto** | `201` |
+| 9 | Produtos | **Criar Produto (preço inválido)** | `400` |
+| 10 | Produtos | **Listar Produtos** / **Listar Produtos (filtros)** / **Buscar Produto por Id** | `200` |
+| 11 | Produtos | **Editar Produto** | `200` |
+| 12 | Avaliações | **Criar Avaliação** | `201` (de novo: `409`) |
+| 13 | Avaliações | **Criar Avaliação (nota inválida)** | `400` |
+| 14 | Avaliações | **Listar Avaliações** / **Buscar Avaliação por Id** | `200` |
+| 15 | Avaliações | **Editar Avaliação** | `200` |
+| 16 | Comentários | **Criar Comentário** | `201` |
+| 17 | Comentários | **Criar Comentário (sem avaliação)** | `400` |
+| 18 | Comentários | **Listar Comentários** / **Buscar Comentário por Id** | `200` |
+| 19 | Comentários | **Editar Comentário** | `200` |
+| 20 | todas | **Apagar Comentário**, **Apagar Avaliação**, **Apagar Produto**, **Apagar Categoria**, **Apagar Loja** | `200` (nesta ordem) |
+
+**Ids nas URLs.** As requisições usam `1` como id (ex.: `/lojas/1`, `/products/1`). Se o id criado no seu banco for outro, troque na URL. O `id` aparece na resposta do `POST` correspondente. O `lojaId` do **Criar Produto** é o id da loja criada no passo 1.
+
+**Testando a permissão.** Crie um segundo usuário (**Criar User** com outro username/e-mail), faça **Login** com ele e tente **Editar** ou **Apagar** o que é do primeiro. Esperado: `403` em produtos, avaliações e comentários, e `401` em lojas.
+
+**Rotas públicas.** Os `GET` de categorias, produtos, avaliações e comentários não exigem token (exceto **Opcoes de Categoria**). Os `GET` de lojas **exigem** token.
+
+**Atenção ao apagar.** **Apagar Loja** leva junto os produtos dela. **Apagar Produto** leva as avaliações e os comentários dele. **Apagar Avaliação** leva os comentários dela. **Apagar Categoria** dá `409` se ainda houver produtos nela.
+
 ## Referência das requisições
 
 | Requisição | Rota | Autenticação |
@@ -68,14 +103,46 @@ O **Delete User** apaga o usuário logado. Para seguir testando, recrie-o com **
 | Get Users | `GET /user` | Bearer (do Login) |
 | Update User | `PATCH /user/:id` | Bearer (do Login) |
 | Delete User | `DELETE /user/:id` | Bearer (do Login) |
+| Criar Loja | `POST /lojas` | Bearer (do Login) |
+| Criar Loja (nome vazio) | `POST /lojas` | Bearer (do Login) |
+| Listar Lojas | `GET /lojas` | Bearer (do Login) |
+| Buscar Loja por Id | `GET /lojas/:id` | Bearer (do Login) |
+| Editar Loja | `PATCH /lojas/:id` | Bearer (do Login) |
+| Apagar Loja | `DELETE /lojas/:id` | Bearer (do Login) |
+| Criar Categoria | `POST /categories` | Bearer (do Login) |
+| Criar Subcategoria | `POST /categories` | Bearer (do Login) |
+| Listar Categorias | `GET /categories` | Não |
+| Opcoes de Categoria | `GET /categories/opcoes` | Bearer (do Login) |
+| Buscar Categoria por Id | `GET /categories/:id` | Não |
+| Editar Categoria | `PATCH /categories/:id` | Bearer (do Login) |
+| Apagar Categoria | `DELETE /categories/:id` | Bearer (do Login) |
+| Criar Produto | `POST /products` | Bearer (do Login) |
+| Criar Produto (preço inválido) | `POST /products` | Bearer (do Login) |
+| Listar Produtos | `GET /products` | Não |
+| Listar Produtos (filtros) | `GET /products?categoriaId=&busca=` | Não |
+| Buscar Produto por Id | `GET /products/:id` | Não |
+| Editar Produto | `PATCH /products/:id` | Bearer (do Login) |
+| Apagar Produto | `DELETE /products/:id` | Bearer (do Login) |
+| Criar Avaliação | `POST /reviews` | Bearer (do Login) |
+| Criar Avaliação (nota inválida) | `POST /reviews` | Bearer (do Login) |
+| Listar Avaliações | `GET /reviews?produtoId=` | Não |
+| Buscar Avaliação por Id | `GET /reviews/:id` | Não |
+| Editar Avaliação | `PATCH /reviews/:id` | Bearer (do Login) |
+| Apagar Avaliação | `DELETE /reviews/:id` | Bearer (do Login) |
+| Criar Comentário | `POST /comments` | Bearer (do Login) |
+| Criar Comentário (sem avaliação) | `POST /comments` | Bearer (do Login) |
+| Listar Comentários | `GET /comments?avaliacaoProdutoId=` | Não |
+| Buscar Comentário por Id | `GET /comments/:id` | Não |
+| Editar Comentário | `PATCH /comments/:id` | Bearer (do Login) |
+| Apagar Comentário | `DELETE /comments/:id` | Bearer (do Login) |
 
 ## Erros comuns
 
 | Código | Causa provável |
 |---|---|
 | `400` | Corpo inválido (e-mail mal formado, senha com menos de 8 caracteres) ou token de recuperação inválido/expirado/já usado |
-| `401` | Login não executado, token expirado, ou senha trocada depois do login (rode o **Login** de novo) |
-| `403` | O id da URL não é o do usuário logado |
-| `404` | Usuário com esse id não existe |
-| `409` | Username ou e-mail já cadastrados |
+| `401` | Login não executado, token expirado, ou senha trocada depois do login (rode o **Login** de novo) ; também é o que **Editar/Apagar Loja** devolvem quando a loja é de outro usuário |
+| `403` | O id da URL não é o do usuário logado, ou o produto/avaliação/comentário é de outro usuário |
+| `404` | O recurso com esse id não existe (usuário, categoria, loja, produto, avaliação ou comentário) |
+| `409` | Username ou e-mail já cadastrados, avaliação repetida no mesmo produto, ou categoria que ainda tem produtos |
 | `429` | Limite de requisições atingido (por exemplo, muitos **Forgot Password** seguidos). Espere 1 minuto |

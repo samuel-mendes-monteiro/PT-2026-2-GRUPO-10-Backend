@@ -122,6 +122,28 @@ Por padrão **todas as rotas exigem token JWT**. As exceções são as marcadas 
 | `PATCH`  | `/user/:id`   | Token   | Atualiza um usuário                                       |
 | `DELETE` | `/user/:id`   | Token   | Remove um usuário                                         |
 
+### Produtos, avaliações e comentários
+
+Leitura (`GET`) é pública; criar, editar e apagar exige token. O dono é sempre o usuário do token (`sub`).
+
+| Método   | Rota            | Auth    | Descrição                                                                 |
+| -------- | --------------- | ------- | ------------------------------------------------------------------------- |
+| `POST`   | `/products`     | Token   | Cria produto (a loja precisa ser do usuário logado)                       |
+| `GET`    | `/products`     | Pública | Lista produtos. Filtros: `?categoriaId=`, `?lojaId=`, `?busca=`           |
+| `GET`    | `/products/:id` | Pública | Detalhe do produto + `mediaNotas` e `totalAvaliacoes`                     |
+| `PATCH`  | `/products/:id` | Token   | Edita produto (só o dono da loja)                                         |
+| `DELETE` | `/products/:id` | Token   | Apaga produto (só o dono da loja)                                         |
+| `POST`   | `/reviews`      | Token   | Avalia um produto (nota 1–5; uma avaliação por usuário/produto)           |
+| `GET`    | `/reviews`      | Pública | Lista avaliações. Filtros: `?produtoId=`, `?usuarioId=`                   |
+| `GET`    | `/reviews/:id`  | Pública | Detalhe da avaliação com seus comentários                                 |
+| `PATCH`  | `/reviews/:id`  | Token   | Edita nota/comentário (só o autor)                                        |
+| `DELETE` | `/reviews/:id`  | Token   | Apaga avaliação (só o autor)                                              |
+| `POST`   | `/comments`     | Token   | Comenta uma avaliação (`avaliacaoProdutoId` OU `avaliacaoLojaId`)         |
+| `GET`    | `/comments`     | Pública | Lista comentários. Obrigatório `?avaliacaoProdutoId=` ou `?avaliacaoLojaId=` |
+| `GET`    | `/comments/:id` | Pública | Detalhe do comentário                                                     |
+| `PATCH`  | `/comments/:id` | Token   | Edita o texto (só o autor)                                                |
+| `DELETE` | `/comments/:id` | Token   | Apaga comentário (só o autor)                                             |
+
 ### Exemplos de corpo
 
 **`POST /auth/login`**
