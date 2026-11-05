@@ -11,6 +11,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { CategoriesModule } from './categories/categories.module.js';
 import { MailModule } from './mail/mail.module.js';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { LojasModule } from './lojas/lojas.module.js';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
     JwtModule,
     CategoriesModule,
     MailModule,
+    LojasModule,
 
   ],
   controllers: [AppController],
