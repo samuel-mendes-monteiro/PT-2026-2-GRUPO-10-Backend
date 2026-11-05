@@ -1,0 +1,1192 @@
+type: collection.insomnia.rest/5.0
+schema_version: "5.1"
+name: CJR PT
+meta:
+  id: wrk_0d19c42bd6854700b8b628968487da85
+  created: 1793847519635
+  modified: 1793847519635
+  description: ""
+collection:
+  - url: localhost:3000/
+    name: Hello World
+    meta:
+      id: req_c6ce8a8b5b6144d69ee6e760e911d1d9
+      created: 1792457504854
+      modified: 1793848329016
+      isPrivate: false
+      description: ""
+      sortKey: -1793848192397
+    method: GET
+    settings:
+      renderRequestBody: true
+      encodeUrl: true
+      followRedirects: global
+      cookies:
+        send: true
+        store: true
+      rebuildPath: true
+  - name: Categorias
+    meta:
+      id: fld_142108974bbf40ff8c78d44b1b8d7627
+      created: 1793000000000
+      modified: 1793000000000
+      sortKey: -1793000000000
+      description: "Rode primeiro: produtos precisam de uma categoria. Precisa do
+        Login feito."
+    children:
+      - url: localhost:3000/categories
+        name: Criar Categoria
+        meta:
+          id: req_8de0ad02c82841e0ac1391277f88469a
+          created: 1793000000007
+          modified: 1793000000007
+          isPrivate: false
+          description: "Esperado: 201. Guarde o id retornado (usado nas outras
+            requisições)."
+          sortKey: -1792999999300
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "nome": "Roupas"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_94bada55039b4deaafacce7017caf263',
+            'b64::JC5hY2Nlc3NfdG9rZW4=::46b', 'never', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:3000/categories
+        name: Criar Subcategoria
+        meta:
+          id: req_13d9bc3593a349fcbe765b28e4cfa1b5
+          created: 1793000000008
+          modified: 1793000000008
+          isPrivate: false
+          description: "Esperado: 201. categoriaPaiId precisa existir (404 se não existir)."
+          sortKey: -1792999999200
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "nome": "Camisetas",
+              "categoriaPaiId": 1
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_94bada55039b4deaafacce7017caf263',
+            'b64::JC5hY2Nlc3NfdG9rZW4=::46b', 'never', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:3000/categories
+        name: Listar Categorias
+        meta:
+          id: req_62df7d799e634fe09197fa11c6855b4e
+          created: 1793000000009
+          modified: 1793000000009
+          isPrivate: false
+          description: "Esperado: 200. Rota pública (não precisa de token)."
+          sortKey: -1792999999100
+        method: GET
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:3000/categories/opcoes
+        name: Opcoes de Categoria (seletor)
+        meta:
+          id: req_fdf32297ae1348a1b30cf52a5f62948e
+          created: 1793000000010
+          modified: 1793000000010
+          isPrivate: false
+          description: "Esperado: 200 com [{id, nome, caminho}]. Precisa de token."
+          sortKey: -1792999999000
+        method: GET
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_94bada55039b4deaafacce7017caf263',
+            'b64::JC5hY2Nlc3NfdG9rZW4=::46b', 'never', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:3000/categories/1
+        name: Buscar Categoria por Id
+        meta:
+          id: req_5cd748f89c1a4db68e2617502a6c6be2
+          created: 1793000000011
+          modified: 1793000000011
+          isPrivate: false
+          description: "Esperado: 200. 404 se o id não existir. Rota pública."
+          sortKey: -1792999998900
+        method: GET
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:3000/categories/1
+        name: Editar Categoria
+        meta:
+          id: req_f74207480ef542e8b841f1f3a2c6d6d0
+          created: 1793000000012
+          modified: 1793848037386
+          isPrivate: false
+          description: "Esperado: 200. Enviar categoriaPaiId = ela mesma ou um descendente
+            dá 400 (ciclo)."
+          sortKey: -1792999998800
+        method: PATCH
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "nome": "Roupas e Acessórios"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_94bada55039b4deaafacce7017caf263',
+            'b64::JC5hY2Nlc3NfdG9rZW4=::46b', 'never', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:3000/categories/2
+        name: Apagar Categoria
+        meta:
+          id: req_143a884775a14e4e8f77888d9508e190
+          created: 1793000000013
+          modified: 1793000000013
+          isPrivate: false
+          description: "Esperado: 200. Dá 409 se ainda houver produtos na categoria.
+            Troque o id na URL."
+          sortKey: -1792999998700
+        method: DELETE
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_94bada55039b4deaafacce7017caf263',
+            'b64::JC5hY2Nlc3NfdG9rZW4=::46b', 'never', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: Produtos
+    meta:
+      id: fld_29d4b177ef4b4dabb6b9450e0aa1cc22
+      created: 1793000000000
+      modified: 1793000000000
+      sortKey: -1792999990000
+      description: "Pré-requisito: uma loja SUA (pasta Lojas > Criar Loja) e uma
+        categoria (pasta Categorias)."
+    children:
+      - url: localhost:3000/products
+        name: Criar Produto
+        meta:
+          id: req_9d91e438e70d48d090cf87994cd18e0c
+          created: 1793000000014
+          modified: 1793000000014
+          isPrivate: false
+          description: "Esperado: 201. lojaId precisa ser de uma loja SUA (crie antes em
+            Lojas > Criar Loja). 404 se loja/categoria não existir, 403 se a
+            loja for de outro usuário."
+          sortKey: -1792999998600
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "lojaId": 1,
+              "categoriaId": 1,
+              "nome": "Camiseta Básica",
+              "descricao": "Algodão, tamanho M",
+              "preco": 49.9,
+              "estoque": 10
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_94bada55039b4deaafacce7017caf263',
+            'b64::JC5hY2Nlc3NfdG9rZW4=::46b', 'never', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:3000/products
+        name: Criar Produto (preço inválido)
+        meta:
+          id: req_f3db86b000634e358ad8906ca1e6ed30
+          created: 1793000000015
+          modified: 1793000000015
+          isPrivate: false
+          description: "Esperado: 400 (preço negativo e estoque não inteiro)."
+          sortKey: -1792999998500
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "_comment": "Deve falhar na validação",
+              "lojaId": 1,
+              "categoriaId": 1,
+              "nome": "Produto Inválido",
+              "preco": -5,
+              "estoque": 1.5
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_94bada55039b4deaafacce7017caf263',
+            'b64::JC5hY2Nlc3NfdG9rZW4=::46b', 'never', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:3000/products
+        name: Listar Produtos
+        meta:
+          id: req_0f14833f010e4fcd8f32639b6931dfc6
+          created: 1793000000016
+          modified: 1793000000016
+          isPrivate: false
+          description: "Esperado: 200. Rota pública."
+          sortKey: -1792999998400
+        method: GET
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:3000/products?categoriaId=1&busca=camiseta
+        name: Listar Produtos (filtros)
+        meta:
+          id: req_ed9167616421461ab703d8514d8a3820
+          created: 1793000000017
+          modified: 1793000000017
+          isPrivate: false
+          description: "Esperado: 200. Filtros opcionais: categoriaId, lojaId, busca
+            (nome, sem diferenciar maiúsculas)."
+          sortKey: -1792999998300
+        method: GET
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:3000/products/1
+        name: Buscar Produto por Id
+        meta:
+          id: req_94340bdc1fde43899a6fcdf1b3207808
+          created: 1793000000018
+          modified: 1793000000018
+          isPrivate: false
+          description: "Esperado: 200 com categoria, loja, imagens, mediaNotas e
+            totalAvaliacoes. 404 se não existir. Rota pública."
+          sortKey: -1792999998200
+        method: GET
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:3000/products/1
+        name: Editar Produto
+        meta:
+          id: req_714a17a98d7c4ea3ae16614379d6ec67
+          created: 1793000000019
+          modified: 1793000000019
+          isPrivate: false
+          description: "Esperado: 200. Só o dono da loja (403 para outros). Campos
+            omitidos não mudam."
+          sortKey: -1792999998100
+        method: PATCH
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "preco": 59.9,
+              "estoque": 8
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_94bada55039b4deaafacce7017caf263',
+            'b64::JC5hY2Nlc3NfdG9rZW4=::46b', 'never', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:3000/products/1
+        name: Apagar Produto
+        meta:
+          id: req_e554f60255ef4962a52425b474133390
+          created: 1793000000020
+          modified: 1793000000020
+          isPrivate: false
+          description: "Esperado: 200. Só o dono da loja. Apaga também as avaliações e
+            comentários do produto (cascata). Rode por último."
+          sortKey: -1792999998000
+        method: DELETE
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_94bada55039b4deaafacce7017caf263',
+            'b64::JC5hY2Nlc3NfdG9rZW4=::46b', 'never', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: Avaliações
+    meta:
+      id: fld_5bb84b9766644b2c9b5ebead0edf7536
+      created: 1793000000000
+      modified: 1793000000000
+      sortKey: -1792999980000
+      description: Avaliações de produto. Crie o produto antes.
+    children:
+      - url: localhost:3000/reviews
+        name: Criar Avaliação
+        meta:
+          id: req_d084a74c5d854e9bbd05abab8b07f528
+          created: 1793000000021
+          modified: 1793000000021
+          isPrivate: false
+          description: "Esperado: 201. Rodar de novo com o mesmo usuário dá 409 (1
+            avaliação por usuário/produto). 404 se o produto não existir."
+          sortKey: -1792999997900
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "produtoId": 1,
+              "nota": 5,
+              "comentario": "Ótima qualidade!"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_94bada55039b4deaafacce7017caf263',
+            'b64::JC5hY2Nlc3NfdG9rZW4=::46b', 'never', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:3000/reviews
+        name: Criar Avaliação (nota inválida)
+        meta:
+          id: req_28dcf4379824413897dc2761a3ea01b4
+          created: 1793000000022
+          modified: 1793000000022
+          isPrivate: false
+          description: "Esperado: 400 (nota deve estar entre 1 e 5)."
+          sortKey: -1792999997800
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "_comment": "Deve falhar na validação",
+              "produtoId": 1,
+              "nota": 9
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_94bada55039b4deaafacce7017caf263',
+            'b64::JC5hY2Nlc3NfdG9rZW4=::46b', 'never', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:3000/reviews?produtoId=1
+        name: Listar Avaliações
+        meta:
+          id: req_7c93135feb9d4044a8b41eccf1fb98bf
+          created: 1793000000023
+          modified: 1793000000023
+          isPrivate: false
+          description: "Esperado: 200. Filtros opcionais: produtoId, usuarioId. Rota
+            pública."
+          sortKey: -1792999997700
+        method: GET
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:3000/reviews/1
+        name: Buscar Avaliação por Id
+        meta:
+          id: req_fba804a446234e3ea756b7bf9d44802e
+          created: 1793000000024
+          modified: 1793000000024
+          isPrivate: false
+          description: "Esperado: 200 com os comentários da avaliação. 404 se não existir.
+            Rota pública."
+          sortKey: -1792999997600
+        method: GET
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:3000/reviews/1
+        name: Editar Avaliação
+        meta:
+          id: req_6741a15f73454096aa3c77160833ffd6
+          created: 1793000000025
+          modified: 1793000000025
+          isPrivate: false
+          description: "Esperado: 200. Só o autor (403 para outros)."
+          sortKey: -1792999997500
+        method: PATCH
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "nota": 4,
+              "comentario": "Boa, mas o tecido amassa."
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_94bada55039b4deaafacce7017caf263',
+            'b64::JC5hY2Nlc3NfdG9rZW4=::46b', 'never', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:3000/reviews/1
+        name: Apagar Avaliação
+        meta:
+          id: req_a71bbf0c66eb47ada5eaf2af0a818cdf
+          created: 1793000000026
+          modified: 1793000000026
+          isPrivate: false
+          description: "Esperado: 200. Só o autor. Apaga também os comentários dela
+            (cascata)."
+          sortKey: -1792999997400
+        method: DELETE
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_94bada55039b4deaafacce7017caf263',
+            'b64::JC5hY2Nlc3NfdG9rZW4=::46b', 'never', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: Comentários
+    meta:
+      id: fld_605b391ce81a40faad94a98d3c2c74f2
+      created: 1793000000000
+      modified: 1793000000000
+      sortKey: -1792999970000
+      description: Comentários em avaliações. Crie a avaliação antes.
+    children:
+      - url: localhost:3000/comments
+        name: Criar Comentário
+        meta:
+          id: req_54ba3eab222c41fbbf9c2dc3c83a32f1
+          created: 1793000000027
+          modified: 1793000000027
+          isPrivate: false
+          description: "Esperado: 201. Informe avaliacaoProdutoId OU avaliacaoLojaId
+            (apenas um). 404 se a avaliação não existir."
+          sortKey: -1792999997300
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "conteudo": "Concordo com a avaliação!",
+              "avaliacaoProdutoId": 1
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_94bada55039b4deaafacce7017caf263',
+            'b64::JC5hY2Nlc3NfdG9rZW4=::46b', 'never', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:3000/comments
+        name: Criar Comentário (sem avaliação)
+        meta:
+          id: req_42672dd8fd3649a597284427bca63789
+          created: 1793000000028
+          modified: 1793000000028
+          isPrivate: false
+          description: "Esperado: 400 (nenhum id de avaliação informado; informar os dois
+            também dá 400)."
+          sortKey: -1792999997200
+        method: POST
+        body:
+          mimeType: application/json
+          text: >-
+            {
+              "_comment": "Deve falhar: falta avaliacaoProdutoId ou avaliacaoLojaId",
+              "conteudo": "Comentário solto"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_94bada55039b4deaafacce7017caf263',
+            'b64::JC5hY2Nlc3NfdG9rZW4=::46b', 'never', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:3000/comments?avaliacaoProdutoId=1
+        name: Listar Comentários
+        meta:
+          id: req_96a9bb03376440eaa80d16a1aa2e1264
+          created: 1793000000029
+          modified: 1793000000029
+          isPrivate: false
+          description: "Esperado: 200. É obrigatório informar avaliacaoProdutoId ou
+            avaliacaoLojaId (senão 400). Rota pública."
+          sortKey: -1792999997100
+        method: GET
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:3000/comments/1
+        name: Buscar Comentário por Id
+        meta:
+          id: req_22af875ee015450d8f6c2fbcc6d6d022
+          created: 1793000000030
+          modified: 1793000000030
+          isPrivate: false
+          description: "Esperado: 200. 404 se não existir. Rota pública."
+          sortKey: -1792999997000
+        method: GET
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:3000/comments/1
+        name: Editar Comentário
+        meta:
+          id: req_cdeae07571254d578a5d9bd7a293b5be
+          created: 1793000000031
+          modified: 1793000000031
+          isPrivate: false
+          description: "Esperado: 200. Só o autor (403 para outros). Só o conteudo muda."
+          sortKey: -1792999996900
+        method: PATCH
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "conteudo": "Comentário editado."
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_94bada55039b4deaafacce7017caf263',
+            'b64::JC5hY2Nlc3NfdG9rZW4=::46b', 'never', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:3000/comments/1
+        name: Apagar Comentário
+        meta:
+          id: req_14e8ac08f57e46e9a670b59a39b6f062
+          created: 1793000000032
+          modified: 1793000000032
+          isPrivate: false
+          description: "Esperado: 200. Só o autor."
+          sortKey: -1792999996800
+        method: DELETE
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_94bada55039b4deaafacce7017caf263',
+            'b64::JC5hY2Nlc3NfdG9rZW4=::46b', 'never', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: Lojas
+    meta:
+      id: fld_b40b0550b50c466bb75662c0b0fa625d
+      created: 1793000000000
+      modified: 1793000000000
+      sortKey: -1793000010000
+      description: "Rode primeiro: produtos precisam de uma loja sua. Precisa do Login
+        feito."
+    children:
+      - url: localhost:3000/lojas
+        name: Criar Loja
+        meta:
+          id: req_79eb86e50bc1426c94b6f7beed1a9700
+          created: 1793000000001
+          modified: 1793000000001
+          isPrivate: false
+          description: "Esperado: 201. O dono (usuarioId) vem do token. Guarde o id
+            retornado: é o lojaId do Criar Produto."
+          sortKey: -1792999999900
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "nome": "Loja do Teste",
+              "descricao": "Loja criada pelo Insomnia",
+              "logoUrl": "https://exemplo.com/logo.png",
+              "bannerUrl": "https://exemplo.com/banner.png",
+              "stickerUrl": "https://exemplo.com/sticker.png"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_94bada55039b4deaafacce7017caf263',
+            'b64::JC5hY2Nlc3NfdG9rZW4=::46b', 'never', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:3000/lojas
+        name: Criar Loja (nome vazio)
+        meta:
+          id: req_70310579af70403eaac949f6a3630269
+          created: 1793000000002
+          modified: 1793000000002
+          isPrivate: false
+          description: "Esperado: 400 (nome não pode estar vazio)."
+          sortKey: -1792999999800
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "_comment": "Deve falhar na validação",
+              "nome": ""
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_94bada55039b4deaafacce7017caf263',
+            'b64::JC5hY2Nlc3NfdG9rZW4=::46b', 'never', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:3000/lojas
+        name: Listar Lojas
+        meta:
+          id: req_12e1f9e500da46f5aa210468b98b0ae0
+          created: 1793000000003
+          modified: 1793000000003
+          isPrivate: false
+          description: "Esperado: 200. Atenção: esta rota exige token (não é pública)."
+          sortKey: -1792999999700
+        method: GET
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_94bada55039b4deaafacce7017caf263',
+            'b64::JC5hY2Nlc3NfdG9rZW4=::46b', 'never', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:3000/lojas/1
+        name: Buscar Loja por Id
+        meta:
+          id: req_67f09b6338cf43ecaa1e2fdb415eb29b
+          created: 1793000000004
+          modified: 1793000000004
+          isPrivate: false
+          description: "Esperado: 200. Se o id não existir, hoje a API devolve 200 com
+            corpo vazio (não 404). Exige token."
+          sortKey: -1792999999600
+        method: GET
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_94bada55039b4deaafacce7017caf263',
+            'b64::JC5hY2Nlc3NfdG9rZW4=::46b', 'never', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:3000/lojas/1
+        name: Editar Loja
+        meta:
+          id: req_eb3ccdf0e62a4e498a6be41368f69ffd
+          created: 1793000000005
+          modified: 1793000000005
+          isPrivate: false
+          description: "Esperado: 200. Só o dono: outro usuário recebe 401 (o código de
+            lojas usa 401, e não 403 como produtos). 404 se a loja não existir."
+          sortKey: -1792999999500
+        method: PATCH
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "nome": "Loja do Teste (editada)",
+              "descricao": "Descrição atualizada"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_94bada55039b4deaafacce7017caf263',
+            'b64::JC5hY2Nlc3NfdG9rZW4=::46b', 'never', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:3000/lojas/1
+        name: Apagar Loja
+        meta:
+          id: req_fc049c42aa2948d9bf4e24a82378929f
+          created: 1793000000006
+          modified: 1793000000006
+          isPrivate: false
+          description: "Esperado: 200. Só o dono (401 para outros). Apaga também os
+            produtos da loja e, em cascata, as avaliações e comentários deles.
+            Rode por último."
+          sortKey: -1792999999400
+        method: DELETE
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_94bada55039b4deaafacce7017caf263',
+            'b64::JC5hY2Nlc3NfdG9rZW4=::46b', 'never', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+  - name: Usuário
+    meta:
+      id: fld_e936cf41ec584214ba444a9904d0cd54
+      created: 1793848192297
+      modified: 1793848192297
+      sortKey: -1793848192297
+      description: ""
+    children:
+      - url: localhost:3000/user/
+        name: Criar User
+        meta:
+          id: req_07c6dbabf0d542ffa05d2a064122dda0
+          created: 1792454304715
+          modified: 1793848210127
+          isPrivate: false
+          description: ""
+          sortKey: -1793848210078
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {        
+              "username": "teste_username",     
+             "nome": "teste",
+              "email":   "teste@gmail.com",
+              "senhaHash": "senha_teste_123",
+              "fotoPerfilUrl": "imagem teste"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:3000/user/3/
+        name: Update User
+        meta:
+          id: req_3790a0f3939c4ba1bacea432ce059def
+          created: 1792454493638
+          modified: 1793848225999
+          isPrivate: false
+          description: ""
+          sortKey: -1793848209628
+        method: PATCH
+        body:
+          mimeType: application/json
+          text: |-
+            {
+             "username": "teste1_username",     
+             "nome": "teste1",
+              "email":   "teste1@gmail.com",
+              "senhaHash": "senha_teste1_123",
+              "fotoPerfilUrl": "imagem teste"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_94bada55039b4deaafacce7017caf263',
+            'b64::JC5hY2Nlc3NfdG9rZW4=::46b', 'never', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:3000/user/
+        name: Get Users
+        meta:
+          id: req_c71be4e4538f49dbb1dc2b7eb9bb5769
+          created: 1792454526561
+          modified: 1793848239655
+          isPrivate: false
+          description: ""
+          sortKey: -1793848209928
+        method: GET
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_94bada55039b4deaafacce7017caf263',
+            'b64::JC5hY2Nlc3NfdG9rZW4=::46b', 'never', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:3000/auth/login/
+        name: Login
+        meta:
+          id: req_94bada55039b4deaafacce7017caf263
+          created: 1792454597024
+          modified: 1793848290610
+          isPrivate: false
+          description: ""
+          sortKey: -1793848209978
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"email": "teste@gmail.com",
+            	"senhaHash": "senha_teste_123"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:3000/auth/me
+        name: About Me (get User by Token)
+        meta:
+          id: req_04e660f2de44468b86acf1366149b5c5
+          created: 1792455890000
+          modified: 1793848222576
+          isPrivate: false
+          description: ""
+          sortKey: -1793848209578
+        method: GET
+        headers:
+          - name: Authorization
+            value: Bearer
+              eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InRlc3RlQGdtYWlsLmNvbSIsInN1YiI6MiwiaWF0IjoxNzkyNDU2MTYxLCJleHAiOjE3OTI1NDI1NjF9.A64dAh0DPf-jyumkfbupG8tt413AHJMWQ_zj8dCMGio
+            description: ""
+            disabled: true
+        authentication:
+          type: bearer
+          disabled: false
+          token: "{% response 'body', 'req_94bada55039b4deaafacce7017caf263',
+            'b64::JC5hY2Nlc3NfdG9rZW4=::46b', 'never', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:3000/user/4/
+        name: Delete User
+        meta:
+          id: req_9aadfae92f1d444e931a9c722c939480
+          created: 1792537760272
+          modified: 1793848322515
+          isPrivate: false
+          description: ""
+          sortKey: -1793848209603
+        method: DELETE
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_94bada55039b4deaafacce7017caf263',
+            'b64::JC5hY2Nlc3NfdG9rZW4=::46b', 'never', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:3000/auth/forgot-password/
+        name: Forgot Password
+        meta:
+          id: req_347dedb388e44639be6304900a11f936
+          created: 1792783994554
+          modified: 1793848214970
+          isPrivate: false
+          description: ""
+          sortKey: -1793848209878
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"_comment": "Token aparece no console",
+            	"email": "teste@gmail.com" 
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:3000/auth/reset-password
+        name: Reset Password
+        meta:
+          id: req_809095cb1d224513aa30fb094da57f09
+          created: 1792784388144
+          modified: 1793848216933
+          isPrivate: false
+          description: ""
+          sortKey: -1793848209778
+        method: POST
+        body:
+          mimeType: application/json
+          text: >-
+            {
+            	"_comment": "Substitua o token pelo que aparece no console quando utiliza o Forgot Password",
+            	"token": "TOKEN_DO_CONSOLE",
+            	"novaSenha": "novasenha123"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:3000/auth/login/
+        name: Login (New Password)
+        meta:
+          id: req_19681b983c8147ef95258ff561c1f301
+          created: 1792784720930
+          modified: 1793848219575
+          isPrivate: false
+          description: ""
+          sortKey: -1793848209678
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+            	"email": "teste@gmail.com",
+            	"senhaHash": "novasenha123"
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+cookieJar:
+  name: Default Jar
+  meta:
+    id: jar_c28fc6ea5ffc4d30a2f6dc77f4e2caa1
+    created: 1792454299844
+    modified: 1792454299844
+environments:
+  name: Base Environment
+  meta:
+    id: env_17d9f1c69a9e4083b71933a5d801d20f
+    created: 1792454299843
+    modified: 1792454299843
+    isPrivate: false
