@@ -133,6 +133,11 @@ Leitura (`GET`) é pública; criar, editar e apagar exige token. O dono é sempr
 | `GET`    | `/products/:id` | Pública | Detalhe do produto + `mediaNotas` e `totalAvaliacoes`                     |
 | `PATCH`  | `/products/:id` | Token   | Edita produto (só o dono da loja)                                         |
 | `DELETE` | `/products/:id` | Token   | Apaga produto (só o dono da loja)                                         |
+| `POST`   | `/product-images`     | Token   | Adiciona imagem a um produto (só o dono da loja). Sem `ordem`, vai para o final |
+| `GET`    | `/product-images`     | Pública | Lista imagens por `ordem`. Filtro: `?produtoId=`                    |
+| `GET`    | `/product-images/:id` | Pública | Detalhe da imagem                                                   |
+| `PATCH`  | `/product-images/:id` | Token   | Edita `urlImagem`/`ordem` (só o dono da loja; não troca o produto)  |
+| `DELETE` | `/product-images/:id` | Token   | Apaga imagem (só o dono da loja)                                    |
 | `POST`   | `/reviews`      | Token   | Avalia um produto (nota 1–5; uma avaliação por usuário/produto)           |
 | `GET`    | `/reviews`      | Pública | Lista avaliações. Filtros: `?produtoId=`, `?usuarioId=`                   |
 | `GET`    | `/reviews/:id`  | Pública | Detalhe da avaliação com seus comentários                                 |
@@ -176,6 +181,18 @@ Resposta (`200`):
 ```
 
 O campo `senhaHash` recebe a **senha em texto puro** (mínimo de 8 caracteres). O hash com bcrypt é feito pelo servidor antes de salvar. `fotoPerfilUrl` é opcional.
+
+**`POST /product-images`**
+
+```json
+{
+  "produtoId": 1,
+  "urlImagem": "https://exemplo.com/produto-1.png",
+  "ordem": 1
+}
+```
+
+`ordem` é opcional (mínimo 1). Se não for enviada, a imagem entra depois da última imagem do produto.
 
 ### Códigos de erro comuns
 
