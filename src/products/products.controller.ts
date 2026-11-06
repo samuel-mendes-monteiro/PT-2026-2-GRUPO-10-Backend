@@ -27,15 +27,14 @@ export class ProductsController {
     return this.productsService.create(dto, usuarioId);
   }
 
-  @Public()
+ @Public()
   @Get()
   findAll(
-    @Query('categoriaId', new ParseIntPipe({ optional: true }))
-    categoriaId?: number,
+    @Query('categoria') categoria?: string,
     @Query('lojaId', new ParseIntPipe({ optional: true })) lojaId?: number,
     @Query('busca') busca?: string,
   ) {
-    return this.productsService.findAll({ categoriaId, lojaId, busca });
+    return this.productsService.findAll({ categoria, lojaId, busca });
   }
 
   @Public()

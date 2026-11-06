@@ -43,11 +43,18 @@ export class ProductsService {
   // ---------- Finds ----------
 
   // Filtros opcionais: ?categoriaId=1&lojaId=2&busca=camisa
-  findAll(filtros: { categoriaId?: number; lojaId?: number; busca?: string }) {
+  findAll(filtros: { categoria?: string; lojaId?: number; busca?: string }) {
     return this.prisma.produto.findMany({
-      // Em Prisma, campo com valor undefined é ignorado no where
       where: {
-        categoriaId: filtros.categoriaId,
+        // Busca dentro da relação "categoria" pelo nome exato, ignorando maiúsculas e minúsculas
+        categoria: filtros.categoria
+          ? {
+              nome: {
+                equals: filtros.categoria,
+                mode: 'insensitive', 
+              },
+            }
+          : undefined,
         lojaId: filtros.lojaId,
         nome: filtros.busca
           ? { contains: filtros.busca, mode: 'insensitive' }
