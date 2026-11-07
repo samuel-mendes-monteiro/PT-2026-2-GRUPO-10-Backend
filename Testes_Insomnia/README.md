@@ -77,6 +77,7 @@ As requisições ficam nas pastas **Lojas**, **Categorias**, **Produtos**, **Ava
 | 15 | Avaliações | **Editar Avaliação** | `200` |
 | 16 | Comentários | **Criar Comentário** | `201` |
 | 17 | Comentários | **Criar Comentário (sem avaliação)** | `400` |
+| 17.1 | Comentários | **Responder Comentário** | `201` (com um `comentarioPaiId` que não existe: `404`) |
 | 18 | Comentários | **Listar Comentários** / **Buscar Comentário por Id** | `200` |
 | 19 | Comentários | **Editar Comentário** | `200` |
 | 20 | todas | **Apagar Comentário**, **Apagar Avaliação**, **Apagar Produto**, **Apagar Categoria**, **Apagar Loja** | `200` (nesta ordem) |
@@ -112,6 +113,7 @@ As requisições ficam nas pastas **Lojas**, **Categorias**, **Produtos**, **Ava
 | Criar Categoria | `POST /categories` | Bearer (do Login) |
 | Criar Subcategoria | `POST /categories` | Bearer (do Login) |
 | Listar Categorias | `GET /categories` | Não |
+| Listar Categorias (só raiz) | `GET /categories?raiz=true` | Não |
 | Opcoes de Categoria | `GET /categories/opcoes` | Bearer (do Login) |
 | Buscar Categoria por Id | `GET /categories/:id` | Não |
 | Editar Categoria | `PATCH /categories/:id` | Bearer (do Login) |
@@ -119,7 +121,8 @@ As requisições ficam nas pastas **Lojas**, **Categorias**, **Produtos**, **Ava
 | Criar Produto | `POST /products` | Bearer (do Login) |
 | Criar Produto (preço inválido) | `POST /products` | Bearer (do Login) |
 | Listar Produtos | `GET /products` | Não |
-| Listar Produtos (filtros) | `GET /products?categoriaId=&busca=` | Não |
+| Listar Produtos (filtros) | `GET /products?categoria=&busca=` | Não |
+| Listar Produtos (ordenados) | `GET /products?ordenarPor=&ordem=` | Não |
 | Buscar Produto por Id | `GET /products/:id` | Não |
 | Editar Produto | `PATCH /products/:id` | Bearer (do Login) |
 | Apagar Produto | `DELETE /products/:id` | Bearer (do Login) |
@@ -131,6 +134,7 @@ As requisições ficam nas pastas **Lojas**, **Categorias**, **Produtos**, **Ava
 | Apagar Avaliação | `DELETE /reviews/:id` | Bearer (do Login) |
 | Criar Comentário | `POST /comments` | Bearer (do Login) |
 | Criar Comentário (sem avaliação) | `POST /comments` | Bearer (do Login) |
+| Responder Comentário | `POST /comments` | Bearer (do Login) |
 | Listar Comentários | `GET /comments?avaliacaoProdutoId=` | Não |
 | Buscar Comentário por Id | `GET /comments/:id` | Não |
 | Editar Comentário | `PATCH /comments/:id` | Bearer (do Login) |
