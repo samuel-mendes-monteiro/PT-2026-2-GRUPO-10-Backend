@@ -33,8 +33,16 @@ export class ProductsController {
     @Query('categoria') categoria?: string,
     @Query('lojaId', new ParseIntPipe({ optional: true })) lojaId?: number,
     @Query('busca') busca?: string,
+    @Query('ordenarPor') ordenarPor?: string,
+    @Query('ordem') ordem?: string,
   ) {
-    return this.productsService.findAll({ categoria, lojaId, busca });
+    return this.productsService.findAll({
+      categoria,
+      lojaId,
+      busca,
+      ordenarPor,
+      ordem,
+    });
   }
 
   @Public()
