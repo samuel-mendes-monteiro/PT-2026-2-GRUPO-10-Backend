@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ForbiddenException,
   Injectable,
   NotFoundException,
@@ -6,6 +7,20 @@ import {
 import { PrismaService } from '../prisma/prisma.service.js';
 import { CreateProductDto } from './dto/create-product.dto.js';
 import { UpdateProductDto } from './dto/update-product.dto.js';
+
+// Ordenações aceitas em GET /products?ordenarPor=
+// relevancia = produtos mais avaliados primeiro (quantidade de avaliações)
+const ORDENACOES = ['recentes', 'nome', 'preco', 'relevancia'] as const;
+type Ordenacao = (typeof ORDENACOES)[number];
+type Ordem = 'asc' | 'desc';
+
+// Sentido padrão de cada ordenação quando ?ordem= não é informado
+const ORDEM_PADRAO: Record<Ordenacao, Ordem> = {
+  recentes: 'desc',
+  nome: 'asc',
+  preco: 'asc',
+  relevancia: 'desc',
+};
 
 @Injectable()
 export class ProductsService {
@@ -42,19 +57,27 @@ export class ProductsService {
 
   // ---------- Finds ----------
 
-  // Filtros opcionais: ?categoriaId=1&lojaId=2&busca=camisa
-  findAll(filtros: { categoria?: string; lojaId?: number; busca?: string }) {
+  // Filtros opcionais: ?categoria=Eletrônicos&lojaId=2&busca=camisa
+  // Ordenação opcional: ?ordenarPor=recentes|nome|preco|relevancia&ordem=asc|desc
+  async findAll(filtros: {
+    categoria?: string;
+    lojaId?: number;
+    busca?: string;
+    ordenarPor?: string;
+    ordem?: string;
+  }) {
+    const ordenarPor = this.validarOrdenacao(filtros.ordenarPor);
+    const ordem = this.validarOrdem(filtros.ordem) ?? ORDEM_PADRAO[ordenarPor];
+
+    // ?categoria= pelo NOME. Se a categoria for pai de outras (ex.: Eletrônicos),
+    // os produtos das filhas (Celulares, Notebooks...) também entram.
+    const categoriaIds = filtros.categoria
+      ? await this.idsDaCategoriaComFilhas(filtros.categoria)
+      : undefined;
+
     return this.prisma.produto.findMany({
       where: {
-        // Busca dentro da relação "categoria" pelo nome exato, ignorando maiúsculas e minúsculas
-        categoria: filtros.categoria
-          ? {
-              nome: {
-                equals: filtros.categoria,
-                mode: 'insensitive', 
-              },
-            }
-          : undefined,
+        categoriaId: categoriaIds ? { in: categoriaIds } : undefined,
         lojaId: filtros.lojaId,
         nome: filtros.busca
           ? { contains: filtros.busca, mode: 'insensitive' }
@@ -64,7 +87,7 @@ export class ProductsService {
         categoria: { select: { id: true, nome: true } },
         loja: { select: { id: true, nome: true } },
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: this.montarOrdenacao(ordenarPor, ordem),
     });
   }
 
@@ -131,6 +154,72 @@ export class ProductsService {
       where: { id: categoriaId },
     });
     if (!categoria) throw new NotFoundException('Categoria não encontrada');
+  }
+
+  // Resolve o NOME da categoria (sem diferenciar maiúsculas/minúsculas) para o id dela
+  // mais os ids de todas as descendentes. 404 se nenhuma categoria tiver esse nome.
+  // (O nome não é único no banco, então partimos de todas as categorias com esse nome.)
+  private async idsDaCategoriaComFilhas(nome: string): Promise<number[]> {
+    const raizes = await this.prisma.categoria.findMany({
+      where: { nome: { equals: nome, mode: 'insensitive' } },
+      select: { id: true },
+    });
+    if (raizes.length === 0) {
+      throw new NotFoundException('Categoria não encontrada');
+    }
+
+    const todas = await this.prisma.categoria.findMany({
+      select: { id: true, categoriaPaiId: true },
+    });
+    const filhasPorPai = new Map<number, number[]>();
+    for (const c of todas) {
+      if (c.categoriaPaiId == null) continue;
+      const filhas = filhasPorPai.get(c.categoriaPaiId) ?? [];
+      filhas.push(c.id);
+      filhasPorPai.set(c.categoriaPaiId, filhas);
+    }
+
+    // Percorre a árvore descendo nível a nível (o array cresce durante o for...of)
+    const ids = new Set<number>(raizes.map((r) => r.id));
+    for (const id of ids) {
+      for (const filhaId of filhasPorPai.get(id) ?? []) ids.add(filhaId);
+    }
+    return [...ids];
+  }
+
+  private validarOrdenacao(valor?: string): Ordenacao {
+    if (valor == null || valor === '') return 'recentes';
+    if (!(ORDENACOES as readonly string[]).includes(valor)) {
+      throw new BadRequestException(
+        `ordenarPor inválido. Use: ${ORDENACOES.join(', ')}`,
+      );
+    }
+    return valor as Ordenacao;
+  }
+
+  private validarOrdem(valor?: string): Ordem | undefined {
+    if (valor == null || valor === '') return undefined;
+    if (valor !== 'asc' && valor !== 'desc') {
+      throw new BadRequestException('ordem inválida. Use: asc ou desc');
+    }
+    return valor;
+  }
+
+  // Sempre desempata por createdAt (mais novo primeiro) para a ordem ser estável
+  private montarOrdenacao(ordenarPor: Ordenacao, ordem: Ordem) {
+    switch (ordenarPor) {
+      case 'nome':
+        return [{ nome: ordem }, { createdAt: 'desc' as const }];
+      case 'preco':
+        return [{ preco: ordem }, { createdAt: 'desc' as const }];
+      case 'relevancia':
+        return [
+          { avaliacoes: { _count: ordem } },
+          { createdAt: 'desc' as const },
+        ];
+      default:
+        return [{ createdAt: ordem }];
+    }
   }
 
   // 404 se o produto não existe, 403 se a loja dele não é do usuário logado
