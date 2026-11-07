@@ -7,6 +7,7 @@ import {
   Param,
   Delete,
   ParseIntPipe,
+  Query,
 } from '@nestjs/common';
 import { CategoriesService } from './categories.service.js';
 import { CreateCategoryDto } from './dto/create-category.dto.js';
@@ -22,10 +23,11 @@ export class CategoriesController {
     return this.categoriesService.create(createCategoryDto);
   }
 
+  // Filtros opcionais: ?raiz=true (só categorias raiz, já com as filhas) e ?nome=Eletrônicos
   @Public()
   @Get()
-  findAll() {
-    return this.categoriesService.findAll();
+  findAll(@Query('raiz') raiz?: string, @Query('nome') nome?: string) {
+    return this.categoriesService.findAll({ raiz: raiz === 'true', nome });
   }
 
   // IMPORTANTE: precisa ficar ANTES de @Get(':id'),

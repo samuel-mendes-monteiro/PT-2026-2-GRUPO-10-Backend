@@ -30,9 +30,17 @@ export class CategoriesService {
 
   // ---------- Finds ----------
 
-  findAll() {
+  // Sem filtros devolve todas as categorias (cada uma com suas filhas diretas).
+  // ?raiz=true devolve só as categorias raiz, e cada raiz já traz as suas filhas.
+  findAll(filtros: { raiz?: boolean; nome?: string } = {}) {
     return this.prisma.categoria.findMany({
-      include: { subcategorias: true },
+      where: {
+        categoriaPaiId: filtros.raiz ? null : undefined,
+        nome: filtros.nome
+          ? { equals: filtros.nome, mode: 'insensitive' }
+          : undefined,
+      },
+      include: { subcategorias: { orderBy: { nome: 'asc' } } },
       orderBy: { nome: 'asc' },
     });
   }
@@ -62,7 +70,11 @@ export class CategoriesService {
   async findOne(id: number) {
     const categoria = await this.prisma.categoria.findUnique({
       where: { id },
-      include: { categoriaPai: true, subcategorias: true },
+      // Raiz ou não, a categoria sempre vem com as filhas diretas (subcategorias)
+      include: {
+        categoriaPai: true,
+        subcategorias: { orderBy: { nome: 'asc' } },
+      },
     });
     if (!categoria) throw new NotFoundException('Categoria com Id não encontrada');
     return categoria;

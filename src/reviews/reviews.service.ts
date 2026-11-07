@@ -63,8 +63,16 @@ export class ReviewsService {
       where: { id },
       include: {
         usuario: AUTOR,
+        // Só os comentários "de cima"; as respostas vêm aninhadas em cada um
         comentarios: {
-          include: { usuario: AUTOR },
+          where: { comentarioPaiId: null },
+          include: {
+            usuario: AUTOR,
+            respostas: {
+              include: { usuario: AUTOR },
+              orderBy: { createdAt: 'asc' },
+            },
+          },
           orderBy: { createdAt: 'asc' },
         },
       },

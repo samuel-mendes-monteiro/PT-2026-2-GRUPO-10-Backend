@@ -129,7 +129,7 @@ Leitura (`GET`) é pública; criar, editar e apagar exige token. O dono é sempr
 | Método   | Rota            | Auth    | Descrição                                                                 |
 | -------- | --------------- | ------- | ------------------------------------------------------------------------- |
 | `POST`   | `/products`     | Token   | Cria produto (a loja precisa ser do usuário logado)                       |
-| `GET`    | `/products`     | Pública | Lista produtos. Filtros: `?categoriaId=`, `?lojaId=`, `?busca=`           |
+| `GET`    | `/products`     | Pública | Lista produtos. Filtros: `?categoria=` (nome; inclui as subcategorias), `?lojaId=`, `?busca=`. Ordenação: `?ordenarPor=recentes\|nome\|preco\|relevancia` e `?ordem=asc\|desc` |
 | `GET`    | `/products/:id` | Pública | Detalhe do produto + `mediaNotas` e `totalAvaliacoes`                     |
 | `PATCH`  | `/products/:id` | Token   | Edita produto (só o dono da loja)                                         |
 | `DELETE` | `/products/:id` | Token   | Apaga produto (só o dono da loja)                                         |
@@ -143,11 +143,26 @@ Leitura (`GET`) é pública; criar, editar e apagar exige token. O dono é sempr
 | `GET`    | `/reviews/:id`  | Pública | Detalhe da avaliação com seus comentários                                 |
 | `PATCH`  | `/reviews/:id`  | Token   | Edita nota/comentário (só o autor)                                        |
 | `DELETE` | `/reviews/:id`  | Token   | Apaga avaliação (só o autor)                                              |
-| `POST`   | `/comments`     | Token   | Comenta uma avaliação (`avaliacaoProdutoId` OU `avaliacaoLojaId`)         |
-| `GET`    | `/comments`     | Pública | Lista comentários. Obrigatório `?avaliacaoProdutoId=` ou `?avaliacaoLojaId=` |
-| `GET`    | `/comments/:id` | Pública | Detalhe do comentário                                                     |
+| `POST`   | `/comments`     | Token   | Comenta uma avaliação (`avaliacaoProdutoId` OU `avaliacaoLojaId`) ou responde um comentário (`comentarioPaiId`) |
+| `GET`    | `/comments`     | Pública | Lista comentários (cada um com suas `respostas`). Obrigatório `?avaliacaoProdutoId=` ou `?avaliacaoLojaId=` |
+| `GET`    | `/comments/:id` | Pública | Detalhe do comentário, com as `respostas`                                 |
 | `PATCH`  | `/comments/:id` | Token   | Edita o texto (só o autor)                                                |
-| `DELETE` | `/comments/:id` | Token   | Apaga comentário (só o autor)                                             |
+| `DELETE` | `/comments/:id` | Token   | Apaga comentário (só o autor). As respostas dele são apagadas junto       |
+
+### Categorias
+
+Leitura (`GET`) é pública, exceto `/categories/opcoes`.
+
+| Método   | Rota                | Auth    | Descrição                                                                                   |
+| -------- | ------------------- | ------- | ------------------------------------------------------------------------------------------- |
+| `POST`   | `/categories`       | Token   | Cria categoria (`categoriaPaiId` opcional; sem ele é uma categoria raiz)                    |
+| `GET`    | `/categories`       | Pública | Lista categorias, cada uma com as filhas (`subcategorias`). Filtros: `?raiz=true` (só raízes), `?nome=` |
+| `GET`    | `/categories/opcoes`| Token   | Lista enxuta para o seletor de categoria pai                                                |
+| `GET`    | `/categories/:id`   | Pública | Detalhe da categoria, com `categoriaPai` e `subcategorias`                                  |
+| `PATCH`  | `/categories/:id`   | Token   | Edita nome/pai (impede ciclos)                                                              |
+| `DELETE` | `/categories/:id`   | Token   | Apaga categoria (`409` se ainda tiver produtos; as filhas viram raiz)                       |
+
+`GET /products?categoria=Eletrônicos` devolve os produtos da categoria **e de todas as suas descendentes**. Se nenhuma categoria tiver esse nome, responde `404`.
 
 ### Exemplos de corpo
 
@@ -181,6 +196,26 @@ Resposta (`200`):
 ```
 
 O campo `senhaHash` recebe a **senha em texto puro** (mínimo de 8 caracteres). O hash com bcrypt é feito pelo servidor antes de salvar. `fotoPerfilUrl` é opcional.
+
+**`POST /comments`** — comentar uma avaliação
+
+```json
+{
+  "conteudo": "Concordo com a avaliação!",
+  "avaliacaoProdutoId": 1
+}
+```
+
+**`POST /comments`** — responder um comentário (forma a thread)
+
+```json
+{
+  "conteudo": "Obrigado pelo comentário!",
+  "comentarioPaiId": 1
+}
+```
+
+Na resposta **não** se envia `avaliacaoProdutoId`/`avaliacaoLojaId` (`400`): a avaliação é a do comentário respondido. A thread tem um nível só: responder a uma resposta cria outra resposta do comentário original. Id de comentário inexistente dá `404`.
 
 **`POST /product-images`**
 
@@ -225,7 +260,7 @@ O schema está em `prisma/schema.prisma`, e a migration inicial em `prisma/migra
 | `ImagemProduto`       | `imagens_produto`       | Imagens de cada produto, com ordem                  |
 | `AvaliacaoProduto`    | `avaliacoes_produto`    | Nota e comentário de um usuário sobre um produto    |
 | `AvaliacaoLoja`       | `avaliacoes_loja`       | Nota e comentário de um usuário sobre uma loja      |
-| `ComentarioAvaliacao` | `comentarios_avaliacao` | Comentários em avaliações de produto ou de loja     |
+| `ComentarioAvaliacao` | `comentarios_avaliacao` | Comentários em avaliações de produto ou de loja, com respostas (`comentario_pai_id`) |
 
 Para visualizar e editar os dados pelo navegador:
 

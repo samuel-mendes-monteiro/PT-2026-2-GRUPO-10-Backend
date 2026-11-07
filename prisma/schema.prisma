@@ -150,6 +150,7 @@ model ComentarioAvaliacao {
   usuarioId          Int      @map("usuario_id")
   avaliacaoLojaId    Int?     @map("avaliacao_loja_id")
   avaliacaoProdutoId Int?     @map("avaliacao_produto_id")
+  comentarioPaiId    Int?     @map("comentario_pai_id")
   conteudo           String   @db.Text
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
@@ -158,8 +159,14 @@ model ComentarioAvaliacao {
   avaliacaoLoja    AvaliacaoLoja?    @relation(fields: [avaliacaoLojaId], references: [id], onDelete: Cascade)
   avaliacaoProduto AvaliacaoProduto? @relation(fields: [avaliacaoProdutoId], references: [id], onDelete: Cascade)
 
+  // Thread: uma resposta aponta para o comentário que ela responde.
+  // Apagar o comentário pai apaga as respostas (Cascade).
+  comentarioPai ComentarioAvaliacao?  @relation("RespostasComentario", fields: [comentarioPaiId], references: [id], onDelete: Cascade)
+  respostas     ComentarioAvaliacao[] @relation("RespostasComentario")
+
   @@index([usuarioId])
   @@index([avaliacaoLojaId])
   @@index([avaliacaoProdutoId])
+  @@index([comentarioPaiId])
   @@map("comentarios_avaliacao")
 }
