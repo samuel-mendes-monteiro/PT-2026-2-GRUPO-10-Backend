@@ -14,4 +14,11 @@ export class CreateCommentDto {
   @IsOptional()
   @IsInt({ message: 'O id da avaliação de loja deve ser um inteiro.' })
   avaliacaoLojaId?: number;
+
+  // Para RESPONDER um comentário: informe só o id dele aqui.
+  // A avaliação é herdada do comentário respondido (por isso, nesse caso,
+  // não se envia avaliacaoProdutoId/avaliacaoLojaId).
+  @IsOptional()
+  @IsInt({ message: 'O id do comentário respondido deve ser um inteiro.' })
+  comentarioPaiId?: number;
 }
