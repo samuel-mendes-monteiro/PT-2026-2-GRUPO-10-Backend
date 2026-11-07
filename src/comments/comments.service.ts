@@ -13,6 +13,12 @@ const AUTOR = {
   select: { id: true, username: true, nome: true, fotoPerfilUrl: true },
 };
 
+// Respostas de um comentário (thread de um nível), da mais antiga para a mais nova.
+const RESPOSTAS = {
+  include: { usuario: AUTOR },
+  orderBy: { createdAt: 'asc' as const },
+};
+
 @Injectable()
 export class CommentsService {
   constructor(private readonly prisma: PrismaService) { }
@@ -20,6 +26,11 @@ export class CommentsService {
   // ---------- Create ----------
 
   async create(dto: CreateCommentDto, usuarioId: number) {
+    // Resposta a outro comentário: a avaliação vem do comentário respondido
+    if (dto.comentarioPaiId != null) {
+      return this.responder(dto, dto.comentarioPaiId, usuarioId);
+    }
+
     const temProduto = dto.avaliacaoProdutoId != null;
     const temLoja = dto.avaliacaoLojaId != null;
 
@@ -57,10 +68,45 @@ export class CommentsService {
     });
   }
 
+  // ---------- Responder (thread) ----------
+
+  // A thread tem um nível só: responder a uma resposta vira mais uma resposta
+  // do comentário original (como nos comentários do YouTube).
+  private async responder(
+    dto: CreateCommentDto,
+    comentarioPaiId: number,
+    usuarioId: number,
+  ) {
+    if (dto.avaliacaoProdutoId != null || dto.avaliacaoLojaId != null) {
+      throw new BadRequestException(
+        'Ao responder um comentário não informe a avaliação: ela é a mesma do comentário respondido',
+      );
+    }
+
+    const pai = await this.prisma.comentarioAvaliacao.findUnique({
+      where: { id: comentarioPaiId },
+    });
+    if (!pai) {
+      throw new NotFoundException('Comentário respondido não encontrado');
+    }
+
+    return this.prisma.comentarioAvaliacao.create({
+      data: {
+        usuarioId, // vem do token, nunca do body
+        conteudo: dto.conteudo,
+        comentarioPaiId: pai.comentarioPaiId ?? pai.id,
+        avaliacaoProdutoId: pai.avaliacaoProdutoId,
+        avaliacaoLojaId: pai.avaliacaoLojaId,
+      },
+      include: { usuario: AUTOR },
+    });
+  }
+
   // ---------- Finds ----------
 
   // Obrigatório informar de qual avaliação quer os comentários,
   // para a rota não despejar a tabela inteira.
+  // Devolve só os comentários "de cima"; as respostas vêm dentro de cada um (respostas).
   findAll(filtros: { avaliacaoProdutoId?: number; avaliacaoLojaId?: number }) {
     if (filtros.avaliacaoProdutoId == null && filtros.avaliacaoLojaId == null) {
       throw new BadRequestException(
@@ -72,8 +118,9 @@ export class CommentsService {
       where: {
         avaliacaoProdutoId: filtros.avaliacaoProdutoId,
         avaliacaoLojaId: filtros.avaliacaoLojaId,
+        comentarioPaiId: null,
       },
-      include: { usuario: AUTOR },
+      include: { usuario: AUTOR, respostas: RESPOSTAS },
       orderBy: { createdAt: 'asc' },
     });
   }
@@ -81,7 +128,7 @@ export class CommentsService {
   async findOne(id: number) {
     const comentario = await this.prisma.comentarioAvaliacao.findUnique({
       where: { id },
-      include: { usuario: AUTOR },
+      include: { usuario: AUTOR, respostas: RESPOSTAS },
     });
     if (!comentario) {
       throw new NotFoundException('Comentário com Id não encontrado');
@@ -105,6 +152,7 @@ export class CommentsService {
 
   async remove(id: number, usuarioId: number) {
     await this.buscarSeForAutor(id, usuarioId);
+    // As respostas do comentário caem em cascata pelo schema
     return this.prisma.comentarioAvaliacao.delete({ where: { id } });
   }
 
