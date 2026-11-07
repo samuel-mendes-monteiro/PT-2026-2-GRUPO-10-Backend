@@ -116,6 +116,24 @@ collection:
             send: true
             store: true
           rebuildPath: true
+      - url: localhost:3000/categories?raiz=true
+        name: Listar Categorias (só raiz)
+        meta:
+          id: req_a35e4307edb141acadff5f72a87a4c8f
+          created: 1793000000101
+          modified: 1793000000101
+          isPrivate: false
+          description: "Esperado: 200. Só as categorias raiz, cada uma já com as filhas em subcategorias. Também aceita ?nome=. Rota pública."
+          sortKey: -1792999999050
+        method: GET
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
       - url: localhost:3000/categories/opcoes
         name: Opcoes de Categoria (seletor)
         meta:
@@ -312,16 +330,35 @@ collection:
             send: true
             store: true
           rebuildPath: true
-      - url: localhost:3000/products?categoriaId=1&busca=camiseta
+      - url: localhost:3000/products?categoria=Roupas&busca=camiseta
         name: Listar Produtos (filtros)
         meta:
           id: req_ed9167616421461ab703d8514d8a3820
           created: 1793000000017
           modified: 1793000000017
           isPrivate: false
-          description: "Esperado: 200. Filtros opcionais: categoriaId, lojaId, busca
-            (nome, sem diferenciar maiúsculas)."
+          description: "Esperado: 200. Filtros opcionais: categoria (NOME da categoria;
+            inclui as subcategorias; 404 se não existir), lojaId, busca (nome,
+            sem diferenciar maiúsculas)."
           sortKey: -1792999998300
+        method: GET
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:3000/products?categoria=Roupas&ordenarPor=preco&ordem=desc
+        name: Listar Produtos (ordenados)
+        meta:
+          id: req_5f7490ecc0d84fabb09c068753778357
+          created: 1793000000102
+          modified: 1793000000102
+          isPrivate: false
+          description: "Esperado: 200. ordenarPor: recentes, nome, preco ou relevancia (mais avaliados). ordem: asc ou desc. Valor inválido dá 400. Rota pública."
+          sortKey: -1792999998250
         method: GET
         settings:
           renderRequestBody: true
@@ -599,6 +636,38 @@ collection:
             {
               "conteudo": "Concordo com a avaliação!",
               "avaliacaoProdutoId": 1
+            }
+        headers:
+          - name: Content-Type
+            value: application/json
+        authentication:
+          type: bearer
+          token: "{% response 'body', 'req_94bada55039b4deaafacce7017caf263',
+            'b64::JC5hY2Nlc3NfdG9rZW4=::46b', 'never', 60 %}"
+        settings:
+          renderRequestBody: true
+          encodeUrl: true
+          followRedirects: global
+          cookies:
+            send: true
+            store: true
+          rebuildPath: true
+      - url: localhost:3000/comments
+        name: Responder Comentário
+        meta:
+          id: req_14d4a5877cc04387983efe28de9a2b23
+          created: 1793000000103
+          modified: 1793000000103
+          isPrivate: false
+          description: "Esperado: 201. Informe só comentarioPaiId (a avaliação vem do comentário respondido). 400 se enviar também o id da avaliação; 404 se o comentário respondido não existir."
+          sortKey: -1792999997250
+        method: POST
+        body:
+          mimeType: application/json
+          text: |-
+            {
+              "conteudo": "Obrigado pelo comentário!",
+              "comentarioPaiId": 1
             }
         headers:
           - name: Content-Type
