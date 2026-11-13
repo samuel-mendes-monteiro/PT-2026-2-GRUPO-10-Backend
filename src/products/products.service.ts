@@ -86,6 +86,8 @@ export class ProductsService {
       include: {
         categoria: { select: { id: true, nome: true } },
         loja: { select: { id: true, nome: true } },
+        // Só a imagem principal (menor ordem), usada nos cards de listagem
+        imagens: { orderBy: { ordem: 'asc' }, take: 1 },
       },
       orderBy: this.montarOrdenacao(ordenarPor, ordem),
     });
