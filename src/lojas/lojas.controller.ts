@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Req } from '@nestjs/
 import { LojasService } from './lojas.service.js';
 import { CreateLojaDto } from './dto/create-loja.dto.js';
 import { UpdateLojaDto } from './dto/update-loja.dto.js';
+import { Public } from '../auth/decorators/isPublic.decorator.js';
 
 @Controller('lojas')
 export class LojasController {
@@ -14,6 +15,8 @@ export class LojasController {
     return this.lojasService.create(createLojaDto, usuarioId);
   }
 
+  // Público: a home lista as lojas mesmo para quem não fez login
+  @Public()
   @Get()
   findAll() {
     return this.lojasService.findAll();

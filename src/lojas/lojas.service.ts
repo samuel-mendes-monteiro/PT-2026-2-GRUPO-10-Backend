@@ -17,8 +17,34 @@ export class LojasService {
   }
   
 
-  findAll() {
-    return this.prisma.loja.findMany();
+  async findAll() {
+    const [lojas, contagens, categorias] = await Promise.all([
+      this.prisma.loja.findMany({ orderBy: { createdAt: 'asc' } }),
+      // Quantos produtos cada loja tem em cada categoria
+      this.prisma.produto.groupBy({
+        by: ['lojaId', 'categoriaId'],
+        _count: { _all: true },
+      }),
+      this.prisma.categoria.findMany({ select: { id: true, nome: true } }),
+    ]);
+
+    // A loja não tem categoria própria: usa a categoria com mais produtos dela
+    const principalPorLoja = new Map<number, { categoriaId: number; total: number }>();
+    for (const c of contagens) {
+      const atual = principalPorLoja.get(c.lojaId);
+      if (!atual || c._count._all > atual.total) {
+        principalPorLoja.set(c.lojaId, { categoriaId: c.categoriaId, total: c._count._all });
+      }
+    }
+    const categoriaPorId = new Map(categorias.map((c) => [c.id, c]));
+
+    return lojas.map((loja) => {
+      const principal = principalPorLoja.get(loja.id);
+      return {
+        ...loja,
+        categoriaPrincipal: principal ? (categoriaPorId.get(principal.categoriaId) ?? null) : null,
+      };
+    });
   }
 
   findOne(id: number) {
