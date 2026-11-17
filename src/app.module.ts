@@ -16,6 +16,7 @@ import { ReviewsModule } from './reviews/reviews.module.js';
 import { CommentsModule } from './comments/comments.module.js';
 import { LojasModule } from './lojas/lojas.module.js';
 import { ProductImagesModule } from './product-images/product-images.module.js';
+import { StoreReviewsModule } from './store-reviews/store-reviews.module.js';
 
 
 @Module({
@@ -35,6 +36,7 @@ import { ProductImagesModule } from './product-images/product-images.module.js';
     MailModule,
     LojasModule,
     ProductImagesModule,
+    StoreReviewsModule,
 
   ],
   controllers: [AppController],

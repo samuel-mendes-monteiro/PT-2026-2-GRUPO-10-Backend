@@ -13,6 +13,16 @@ const AUTOR = {
   select: { id: true, username: true, nome: true, fotoPerfilUrl: true },
 };
 
+// Dados do produto avaliado (nome, loja e só a imagem principal), para listar sem outra requisição
+const PRODUTO = {
+  select: {
+    id: true,
+    nome: true,
+    loja: { select: { id: true, nome: true } },
+    imagens: { orderBy: { ordem: 'asc' as const }, take: 1 },
+  },
+};
+
 @Injectable()
 export class ReviewsService {
   constructor(private readonly prisma: PrismaService) { }
@@ -52,6 +62,7 @@ export class ReviewsService {
       where: { produtoId: filtros.produtoId, usuarioId: filtros.usuarioId },
       include: {
         usuario: AUTOR,
+        produto: PRODUTO,
         _count: { select: { comentarios: true } },
       },
       orderBy: { createdAt: 'desc' },
