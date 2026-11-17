@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { CreateUserDto } from './dto/create-user.dto.js';
 import { UpdateUserDto } from './dto/update-user.dto.js';
@@ -96,10 +96,24 @@ export class UserService {
   //Update
 
   async update(id: number, updateUserDto: UpdateUserDto) {
-    const isValidId = await this.prisma.usuario.findUnique({ where: { id } })
+    const user = await this.prisma.usuario.findUnique({ where: { id } });
 
-    if (!isValidId) {
+    if (!user) {
       throw new NotFoundException('User com Id não encontrado');
+    }
+
+    const isChangingPassword = updateUserDto.senhaHash !== undefined;
+
+    if (isChangingPassword) {
+      if (!updateUserDto.senhaAtual) {
+        throw new BadRequestException('Senha atual é obrigatória para alterar a senha');
+      }
+
+      const senhaCorreta = await bcrypt.compare(updateUserDto.senhaAtual, user.senhaHash);
+
+      if (!senhaCorreta) {
+        throw new UnauthorizedException('Senha atual incorreta');
+      }
     }
 
     return await this.prisma.usuario.update({
@@ -108,8 +122,8 @@ export class UserService {
         username: updateUserDto.username,
         nome: updateUserDto.nome,
         email: updateUserDto.email,
-        ...(updateUserDto.senhaHash !== undefined && {
-          senhaHash: await bcrypt.hash(updateUserDto.senhaHash, 10),
+        ...(isChangingPassword && {
+          senhaHash: await bcrypt.hash(updateUserDto.senhaHash!, 10),
           senhaVersao: { increment: 1 },
         }),
         fotoPerfilUrl: updateUserDto.fotoPerfilUrl,
@@ -119,11 +133,10 @@ export class UserService {
         username: true,
         nome: true,
         email: true,
-        senhaHash: false,
         fotoPerfilUrl: true,
         createdAt: true,
         updatedAt: true,
-      }
+      },
     });
   }
 
