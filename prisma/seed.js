@@ -195,6 +195,7 @@ async function main() {
     const lojasData = [
       {
         usuario_id: usuariosMap['roberto_mercado'],
+        categoria_id: categoriasMap['Mercado'],
         nome: 'SuperMercado Bom Preço',
         descricao: 'Alimentos frescos, bebidas e produtos de mercearia com entrega rápida e os melhores preços.',
         logo_url: 'https://images.unsplash.com/photo-1578916171728-46686eac8d58?w=300',
@@ -203,6 +204,7 @@ async function main() {
       },
       {
         usuario_id: usuariosMap['carlos_farmacia'],
+        categoria_id: categoriasMap['Farmácia'],
         nome: 'Farmácia Viva Bem',
         descricao: 'Sua saúde e cuidado diário em primeiro lugar. Medicamentos, vitaminas e produtos para bebê.',
         logo_url: 'https://images.unsplash.com/photo-1586015555751-63c29994c6d3?w=300',
@@ -211,6 +213,7 @@ async function main() {
       },
       {
         usuario_id: usuariosMap['mariana_beleza'],
+        categoria_id: categoriasMap['Beleza'],
         nome: 'Glow Beleza & Cosméticos',
         descricao: 'O universo da beleza em um só lugar. Linhas completas de skincare, perfumes e maquiagens.',
         logo_url: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=300',
@@ -219,6 +222,7 @@ async function main() {
       },
       {
         usuario_id: usuariosMap['ana_moda'],
+        categoria_id: categoriasMap['Moda'],
         nome: 'Urban Style Modas',
         descricao: 'Tendências contemporâneas, calçados e vestuário com o melhor caimento e estilo autêntico.',
         logo_url: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=300',
@@ -227,6 +231,7 @@ async function main() {
       },
       {
         usuario_id: usuariosMap['lucas_tech'],
+        categoria_id: categoriasMap['Eletrônicos'],
         nome: 'TechZone Eletrônicos',
         descricao: 'Tecnologia de ponta: smartphones, notebooks, televisores e acessórios com garantia total.',
         logo_url: 'https://images.unsplash.com/photo-1550009158-9ebf69173e03?w=300',
@@ -235,6 +240,7 @@ async function main() {
       },
       {
         usuario_id: usuariosMap['felipe_games'],
+        categoria_id: categoriasMap['Jogos'],
         nome: 'Pixel Play Games',
         descricao: 'O paraíso gamer! Consoles PlayStation, Xbox, Nintendo Switch, periféricos para PC e lançamentos.',
         logo_url: 'https://images.unsplash.com/photo-1612287232230-67d7102e1c31?w=300',
@@ -243,6 +249,7 @@ async function main() {
       },
       {
         usuario_id: usuariosMap['camila_brinquedos'],
+        categoria_id: categoriasMap['Brinquedos'],
         nome: 'Mundo Mágico Brinquedos',
         descricao: 'Diversão para todas as idades! Jogos de tabuleiro, figuras colecionáveis, pelúcias e educativos.',
         logo_url: 'https://images.unsplash.com/photo-1566576912321-d58ddd7a6088?w=300',
@@ -251,6 +258,7 @@ async function main() {
       },
       {
         usuario_id: usuariosMap['juliana_casa'],
+        categoria_id: categoriasMap['Casa'],
         nome: 'Lar & Conforto',
         descricao: 'Transforme seu lar com móveis elegantes, utilidades de cozinha, decoração e roupas de cama.',
         logo_url: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?w=300',
@@ -262,10 +270,10 @@ async function main() {
     const lojasMap = {};
     for (const l of lojasData) {
       const res = await client.query(
-        `INSERT INTO "lojas" ("usuario_id", "nome", "descricao", "logo_url", "banner_url", "sticker_url", "createdAt", "updatedAt")
-         VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
+        `INSERT INTO "lojas" ("usuario_id", "categoria_id", "nome", "descricao", "logo_url", "banner_url", "sticker_url", "createdAt", "updatedAt")
+         VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), NOW())
          RETURNING "id"`,
-        [l.usuario_id, l.nome, l.descricao, l.logo_url, l.banner_url, l.sticker_url]
+        [l.usuario_id, l.categoria_id, l.nome, l.descricao, l.logo_url, l.banner_url, l.sticker_url]
       );
       lojasMap[l.nome] = res.rows[0].id;
     }
