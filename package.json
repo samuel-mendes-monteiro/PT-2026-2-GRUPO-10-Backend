@@ -24,6 +24,8 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
     "prisma:studio": "prisma studio",
+    "seed": "node prisma/seed.js",
+    "db:seed": "node prisma/seed.js",
     "db:up": "docker compose up -d",
     "db:down": "docker compose down"
   },
@@ -72,5 +74,8 @@
     "@prisma/engines@7.10.0": true,
     "bcrypt@6.0.0": true,
     "prisma@7.10.0": true
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
   }
 }

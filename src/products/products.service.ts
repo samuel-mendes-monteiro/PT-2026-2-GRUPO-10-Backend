@@ -75,7 +75,7 @@ export class ProductsService {
       ? await this.idsDaCategoriaComFilhas(filtros.categoria)
       : undefined;
 
-    return this.prisma.produto.findMany({
+    const produtos = await this.prisma.produto.findMany({
       where: {
         categoriaId: categoriaIds ? { in: categoriaIds } : undefined,
         lojaId: filtros.lojaId,
@@ -91,6 +91,11 @@ export class ProductsService {
       },
       orderBy: this.montarOrdenacao(ordenarPor, ordem),
     });
+
+    return produtos.map((produto) => ({
+      ...produto,
+      fotoUrl: produto.imagens[0]?.urlImagem,
+    }));
   }
 
   async findOne(id: number) {
@@ -158,21 +163,22 @@ export class ProductsService {
     if (!categoria) throw new NotFoundException('Categoria não encontrada');
   }
 
-  // Resolve o NOME da categoria (sem diferenciar maiúsculas/minúsculas) para o id dela
+  // Resolve o NOME da categoria (sem diferenciar maiúsculas/minúsculas nem acentos) para o id dela
   // mais os ids de todas as descendentes. 404 se nenhuma categoria tiver esse nome.
   // (O nome não é único no banco, então partimos de todas as categorias com esse nome.)
   private async idsDaCategoriaComFilhas(nome: string): Promise<number[]> {
-    const raizes = await this.prisma.categoria.findMany({
-      where: { nome: { equals: nome, mode: 'insensitive' } },
-      select: { id: true },
+    const normalizar = (s: string) =>
+      s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+
+    const todas = await this.prisma.categoria.findMany({
+      select: { id: true, nome: true, categoriaPaiId: true },
     });
+
+    const nomeNorm = normalizar(nome);
+    const raizes = todas.filter((c) => normalizar(c.nome) === nomeNorm);
     if (raizes.length === 0) {
       throw new NotFoundException('Categoria não encontrada');
     }
-
-    const todas = await this.prisma.categoria.findMany({
-      select: { id: true, categoriaPaiId: true },
-    });
     const filhasPorPai = new Map<number, number[]>();
     for (const c of todas) {
       if (c.categoriaPaiId == null) continue;
