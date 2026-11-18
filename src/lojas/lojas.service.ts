@@ -1,73 +1,96 @@
-import { Injectable, UnauthorizedException, NotFoundException } from '@nestjs/common';import { CreateLojaDto } from './dto/create-loja.dto.js';
+import { Injectable, UnauthorizedException, NotFoundException } from '@nestjs/common';
+import { CreateLojaDto } from './dto/create-loja.dto.js';
 import { UpdateLojaDto } from './dto/update-loja.dto.js';
 import { PrismaService } from '../prisma/prisma.service.js';
-
 
 @Injectable()
 export class LojasService {
   constructor(private prisma: PrismaService) {}
 
-  create(createLojaDto: CreateLojaDto, usuarioId: number) {
-    return this.prisma.loja.create({
+  async create(createLojaDto: CreateLojaDto, usuarioId: number) {
+    if (createLojaDto.categoriaId) {
+      const categoria = await this.prisma.categoria.findUnique({
+        where: { id: createLojaDto.categoriaId },
+      });
+      if (!categoria) throw new NotFoundException('Categoria não encontrada.');
+    }
+
+    const loja = await this.prisma.loja.create({
       data: {
         ...createLojaDto,
         usuarioId: usuarioId,
       },
+      include: {
+        categoria: { select: { id: true, nome: true } },
+      },
     });
+
+    return {
+      ...loja,
+      categoriaPrincipal: loja.categoria,
+    };
   }
-  
 
   async findAll() {
-    const [lojas, contagens, categorias] = await Promise.all([
-      this.prisma.loja.findMany({ orderBy: { createdAt: 'asc' } }),
-      // Quantos produtos cada loja tem em cada categoria
-      this.prisma.produto.groupBy({
-        by: ['lojaId', 'categoriaId'],
-        _count: { _all: true },
-      }),
-      this.prisma.categoria.findMany({ select: { id: true, nome: true } }),
-    ]);
-
-    // A loja não tem categoria própria: usa a categoria com mais produtos dela
-    const principalPorLoja = new Map<number, { categoriaId: number; total: number }>();
-    for (const c of contagens) {
-      const atual = principalPorLoja.get(c.lojaId);
-      if (!atual || c._count._all > atual.total) {
-        principalPorLoja.set(c.lojaId, { categoriaId: c.categoriaId, total: c._count._all });
-      }
-    }
-    const categoriaPorId = new Map(categorias.map((c) => [c.id, c]));
-
-    return lojas.map((loja) => {
-      const principal = principalPorLoja.get(loja.id);
-      return {
-        ...loja,
-        categoriaPrincipal: principal ? (categoriaPorId.get(principal.categoriaId) ?? null) : null,
-      };
+    const lojas = await this.prisma.loja.findMany({
+      orderBy: { createdAt: 'asc' },
+      include: {
+        categoria: { select: { id: true, nome: true } },
+      },
     });
+
+    return lojas.map((loja) => ({
+      ...loja,
+      categoriaPrincipal: loja.categoria,
+    }));
   }
 
-  findOne(id: number) {
-    return this.prisma.loja.findUnique({
+  async findOne(id: number) {
+    const loja = await this.prisma.loja.findUnique({
       where: { id },
+      include: {
+        categoria: { select: { id: true, nome: true } },
+      },
     });
+
+    if (!loja) throw new NotFoundException('Loja não encontrada.');
+
+    return {
+      ...loja,
+      categoriaPrincipal: loja.categoria,
+    };
   }
 
   async update(id: number, updateLojaDto: UpdateLojaDto, usuarioId: number) {
     const loja = await this.prisma.loja.findUnique({ where: { id } });
-    
+
     if (!loja) throw new NotFoundException('Loja não encontrada.');
     if (loja.usuarioId !== usuarioId) throw new UnauthorizedException('Não tem permissão para editar esta loja.');
 
-    return this.prisma.loja.update({
+    if (updateLojaDto.categoriaId) {
+      const categoria = await this.prisma.categoria.findUnique({
+        where: { id: updateLojaDto.categoriaId },
+      });
+      if (!categoria) throw new NotFoundException('Categoria não encontrada.');
+    }
+
+    const atualizada = await this.prisma.loja.update({
       where: { id },
       data: updateLojaDto,
+      include: {
+        categoria: { select: { id: true, nome: true } },
+      },
     });
+
+    return {
+      ...atualizada,
+      categoriaPrincipal: atualizada.categoria,
+    };
   }
 
   async remove(id: number, usuarioId: number) {
     const loja = await this.prisma.loja.findUnique({ where: { id } });
-    
+
     if (!loja) throw new NotFoundException('Loja não encontrada.');
     if (loja.usuarioId !== usuarioId) throw new UnauthorizedException('Não tem permissão para apagar esta loja.');
 
