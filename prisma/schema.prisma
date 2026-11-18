@@ -45,21 +45,24 @@ model TokenRecuperacaoSenha {
 }
 
 model Loja {
-  id         Int      @id @default(autoincrement())
-  usuarioId  Int      @map("usuario_id")
-  nome       String   @db.VarChar(255)
-  descricao  String?  @db.Text
-  logoUrl    String?  @map("logo_url") @db.VarChar(255)
-  bannerUrl  String?  @map("banner_url") @db.VarChar(255)
-  stickerUrl String?  @map("sticker_url") @db.VarChar(255)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id          Int      @id @default(autoincrement())
+  usuarioId   Int      @map("usuario_id")
+  categoriaId Int?     @map("categoria_id")
+  nome        String   @db.VarChar(255)
+  descricao   String?  @db.Text
+  logoUrl     String?  @map("logo_url") @db.VarChar(255)
+  bannerUrl   String?  @map("banner_url") @db.VarChar(255)
+  stickerUrl  String?  @map("sticker_url") @db.VarChar(255)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   usuario    Usuario         @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  categoria  Categoria?      @relation(fields: [categoriaId], references: [id], onDelete: SetNull)
   produtos   Produto[]
   avaliacoes AvaliacaoLoja[]
 
   @@index([usuarioId])
+  @@index([categoriaId])
   @@map("lojas")
 }
 
@@ -71,6 +74,7 @@ model Categoria {
   categoriaPai  Categoria?  @relation("Subcategorias", fields: [categoriaPaiId], references: [id], onDelete: SetNull)
   subcategorias Categoria[] @relation("Subcategorias")
   produtos      Produto[]
+  lojas         Loja[]
 
   @@index([categoriaPaiId])
   @@map("categorias")
