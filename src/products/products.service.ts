@@ -85,7 +85,7 @@ export class ProductsService {
       },
       include: {
         categoria: { select: { id: true, nome: true } },
-        loja: { select: { id: true, nome: true } },
+        loja: { select: { id: true, nome: true, logoUrl: true, stickerUrl: true } },
         // Só a imagem principal (menor ordem), usada nos cards de listagem
         imagens: { orderBy: { ordem: 'asc' }, take: 1 },
       },
@@ -103,7 +103,7 @@ export class ProductsService {
       where: { id },
       include: {
         categoria: { select: { id: true, nome: true } },
-        loja: { select: { id: true, nome: true } },
+        loja: { select: { id: true, nome: true, logoUrl: true, stickerUrl: true } },
         imagens: { orderBy: { ordem: 'asc' } },
       },
     });
