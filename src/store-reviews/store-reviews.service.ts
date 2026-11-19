@@ -16,7 +16,7 @@ const AUTOR = {
 
 // Dados da loja avaliada (para mostrar o card sem outra requisição)
 const LOJA = {
-  select: { id: true, nome: true, logoUrl: true },
+  select: { id: true, nome: true, logoUrl: true, usuarioId: true },
 };
 
 @Injectable()

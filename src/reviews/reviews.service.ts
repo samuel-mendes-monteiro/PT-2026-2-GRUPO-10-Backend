@@ -18,7 +18,7 @@ const PRODUTO = {
   select: {
     id: true,
     nome: true,
-    loja: { select: { id: true, nome: true } },
+    loja: { select: { id: true, nome: true, usuarioId: true } },
     imagens: { orderBy: { ordem: 'asc' as const }, take: 1 },
   },
 };
@@ -74,6 +74,7 @@ export class ReviewsService {
       where: { id },
       include: {
         usuario: AUTOR,
+        produto: PRODUTO,
         // Só os comentários "de cima"; as respostas vêm aninhadas em cada um
         comentarios: {
           where: { comentarioPaiId: null },
