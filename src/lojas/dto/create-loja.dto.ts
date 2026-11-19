@@ -1,13 +1,15 @@
 
-import {IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsInt, IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
 
 export class CreateLojaDto {
-  
-
   @IsString()
-  @IsNotEmpty()
+  @IsNotEmpty({ message: 'O nome da loja não pode estar vazio.' })
   @MaxLength(255)
   nome: string;
+
+  @IsInt({ message: 'A categoria deve ser selecionada.' })
+  @IsNotEmpty({ message: 'A categoria é obrigatória.' })
+  categoriaId: number;
 
   @IsString()
   @IsOptional()
